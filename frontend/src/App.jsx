@@ -1,5 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
+// Landing Page
+import Landing from './pages/Landing';
+
 // Requester Imports
 import RequesterLayout from './layouts/RequesterLayout';
 import RequesterDashboard from './pages/Requester/Dashboard';
@@ -22,8 +25,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Redirect root to requester dashboard 
-        <Route path="/" element={<Navigate to="/requester/dashboard" replace />} /> */}
+        {/* Landing Page */}
+        <Route path="/" element={<Landing />} />
         
         {/* Requester Routes */}
         <Route path="/requester" element={<RequesterLayout />}>

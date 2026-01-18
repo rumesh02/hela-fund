@@ -31,7 +31,7 @@ const Header = () => {
               <p className="text-xs text-gray-500">Student</p>
             </div>
             <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-              JD
+              RE
             </div>
           </div>
         </div>
