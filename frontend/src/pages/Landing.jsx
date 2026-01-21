@@ -116,13 +116,13 @@ const Landing = () => {
           </div>
           <div className="flex gap-4">
             <button 
-              onClick={() => navigate('/requester/dashboard')}
+              onClick={() => navigate('/login')}
               className="px-6 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 font-medium"
             >
               Sign In
             </button>
             <button 
-              onClick={() => navigate('/requester/dashboard')}
+              onClick={() => navigate('/signup')}
               className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 font-medium shadow-lg shadow-purple-500/50"
             >
               Get Started
@@ -154,7 +154,7 @@ const Landing = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-200">
             <button 
-              onClick={() => navigate('/requester/dashboard')}
+              onClick={() => navigate('/signup')}
               className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 font-semibold text-lg shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105"
             >
               <span className="flex items-center gap-2 justify-center">
@@ -163,10 +163,10 @@ const Landing = () => {
               </span>
             </button>
             <button 
-              onClick={() => navigate('/supporter/dashboard')}
+              onClick={() => navigate('/login')}
               className="px-8 py-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 font-semibold text-lg hover:scale-105"
             >
-              Browse Requests
+              Sign In
             </button>
           </div>
         </div>
@@ -487,7 +487,7 @@ const Landing = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button 
-                onClick={() => navigate('/requester/dashboard')}
+                onClick={() => navigate('/signup')}
                 className="group px-10 py-5 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 font-bold text-xl shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105"
               >
                 <span className="flex items-center gap-2 justify-center">
@@ -496,10 +496,10 @@ const Landing = () => {
                 </span>
               </button>
               <button 
-                onClick={() => navigate('/supporter/dashboard')}
+                onClick={() => navigate('/login')}
                 className="px-10 py-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 font-bold text-xl hover:scale-105"
               >
-                Explore Platform
+                Sign In
               </button>
             </div>
 

@@ -3,6 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // Landing Page
 import Landing from './pages/Landing';
 
+// Auth Pages
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+
+// Protected Route Component
+import ProtectedRoute from './components/ProtectedRoute';
+
 // Requester Imports
 import RequesterLayout from './layouts/RequesterLayout';
 import RequesterDashboard from './pages/Requester/Dashboard';
@@ -28,8 +35,16 @@ function App() {
         {/* Landing Page */}
         <Route path="/" element={<Landing />} />
         
+        {/* Auth Routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        
         {/* Requester Routes */}
-        <Route path="/requester" element={<RequesterLayout />}>
+        <Route path="/requester" element={
+          <ProtectedRoute requiredRole="requester">
+            <RequesterLayout />
+          </ProtectedRoute>
+        }>
           <Route index element={<Navigate to="/requester/dashboard" replace />} />
           <Route path="dashboard" element={<RequesterDashboard />} />
           <Route path="create-request" element={<CreateRequest />} />
@@ -40,7 +55,11 @@ function App() {
         </Route>
 
         {/* Supporter Routes */}
-        <Route path="/supporter" element={<SupporterLayout />}>
+        <Route path="/supporter" element={
+          <ProtectedRoute requiredRole="supporter">
+            <SupporterLayout />
+          </ProtectedRoute>
+        }>
           <Route index element={<Navigate to="/supporter/dashboard" replace />} />
           <Route path="dashboard" element={<SupporterDashboard />} />
           <Route path="browse-requests" element={<BrowseRequests />} />
@@ -50,8 +69,8 @@ function App() {
           <Route path="settings" element={<SupporterSettings />} />
         </Route>
 
-        {/* Catch all - redirect to dashboard */}
-        <Route path="*" element={<Navigate to="/requester/dashboard" replace />} />
+        {/* Catch all - redirect to landing */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
