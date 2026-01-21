@@ -86,44 +86,42 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div 
-          className="absolute top-20 -left-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"
+          className="absolute top-20 -left-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         />
         <div 
-          className="absolute top-1/3 -right-20 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl animate-pulse delay-1000"
+          className="absolute top-1/3 -right-20 w-[500px] h-[500px] bg-slate-700/20 rounded-full blur-3xl"
           style={{ transform: `translateY(${scrollY * 0.3}px)` }}
         />
         <div 
-          className="absolute bottom-20 left-1/3 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl animate-pulse delay-500"
+          className="absolute bottom-20 left-1/3 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl"
           style={{ transform: `translateY(${scrollY * 0.4}px)` }}
         />
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-50 px-6 py-6">
+      <nav className="relative z-50 px-6 py-6 border-b border-white/5 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/50">
-              <HeartHandshake className="w-6 h-6" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-              HelaFund
+            <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-12 h-12" />
+            <span className="text-2xl font-bold text-white">
+              Hela Fund
             </span>
           </div>
           <div className="flex gap-4">
             <button 
               onClick={() => navigate('/login')}
-              className="px-6 py-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 font-medium"
+              className="px-6 py-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 font-medium"
             >
               Sign In
             </button>
             <button 
               onClick={() => navigate('/signup')}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 font-medium shadow-lg shadow-purple-500/50"
+              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 transition-all duration-200 font-medium shadow-lg shadow-blue-600/20"
             >
               Get Started
             </button>
@@ -134,20 +132,20 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="relative z-10 px-6 pt-20 pb-32">
         <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8 animate-fade-in">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-sm font-medium">Empowering Student Communities</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 backdrop-blur-sm border border-blue-600/20 mb-8 animate-fade-in">
+            <Sparkles className="w-4 h-4 text-blue-400" />
+            <span className="text-sm font-medium text-gray-300">Empowering Student Communities</span>
           </div>
           
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight animate-slide-up">
-            <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="text-white">
               Help Each Other.
             </span>
             <br />
-            <span className="text-white">Build Together.</span>
+            <span className="text-blue-400">Build Together.</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed animate-slide-up delay-100">
+          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed animate-slide-up delay-100">
             A micro help & support platform where university students can find lost items, 
             fund small needs, and build a stronger community through trust and collaboration.
           </p>
@@ -155,7 +153,7 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-200">
             <button 
               onClick={() => navigate('/signup')}
-              className="group px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 font-semibold text-lg shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105"
+              className="group px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-all duration-200 font-semibold text-lg shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30"
             >
               <span className="flex items-center gap-2 justify-center">
                 Start Helping Now
@@ -164,7 +162,7 @@ const Landing = () => {
             </button>
             <button 
               onClick={() => navigate('/login')}
-              className="px-8 py-4 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 font-semibold text-lg hover:scale-105"
+              className="px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 font-semibold text-lg"
             >
               Sign In
             </button>
@@ -175,16 +173,16 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto mt-20 relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 perspective-1000">
             {[
-              { icon: Search, title: "Lost & Found", color: "from-blue-500 to-cyan-500" },
-              { icon: DollarSign, title: "Micro-Funding", color: "from-purple-500 to-pink-500" },
-              { icon: Users, title: "Community Help", color: "from-orange-500 to-yellow-500" }
+              { icon: Search, title: "Lost & Found", color: "bg-blue-600" },
+              { icon: DollarSign, title: "Micro-Funding", color: "bg-slate-700" },
+              { icon: Users, title: "Community Help", color: "bg-teal-600" }
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="group p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer animate-fade-in-up"
+                className="group p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer animate-fade-in-up"
                 style={{ animationDelay: `${idx * 100}ms` }}
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                <div className={`w-14 h-14 rounded-2xl ${item.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
                   <item.icon className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">{item.title}</h3>
@@ -200,11 +198,11 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16" data-animate id="features-header">
             <h2 className={`text-5xl md:text-6xl font-bold mb-6 transition-all duration-1000 ${isVisible['features-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-white">
                 Everything You Need
               </span>
             </h2>
-            <p className={`text-xl text-gray-300 max-w-2xl mx-auto transition-all duration-1000 delay-100 ${isVisible['features-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <p className={`text-xl text-gray-400 max-w-2xl mx-auto transition-all duration-1000 delay-100 ${isVisible['features-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               Powerful features designed to make helping and getting help seamless
             </p>
           </div>
@@ -215,32 +213,32 @@ const Landing = () => {
                 icon: Search,
                 title: "Lost & Found Network",
                 description: "Instantly connect with students who found or lost items on campus. Real-time notifications and verified matches.",
-                gradient: "from-blue-500/20 to-cyan-500/20",
-                iconGradient: "from-blue-500 to-cyan-500",
+                gradient: "from-blue-600/10 to-blue-600/5",
+                iconColor: "bg-blue-600",
                 features: ["Real-time alerts", "Campus-wide reach", "Photo verification"]
               },
               {
                 icon: DollarSign,
                 title: "Micro-Funding Support",
                 description: "Request or provide small financial help for books, meals, or emergencies. Transparent and secure.",
-                gradient: "from-purple-500/20 to-pink-500/20",
-                iconGradient: "from-purple-500 to-pink-500",
+                gradient: "from-slate-700/10 to-slate-700/5",
+                iconColor: "bg-slate-700",
                 features: ["Secure payments", "Transparent tracking", "Quick disbursement"]
               },
               {
                 icon: Users,
                 title: "Community Help Hub",
                 description: "Get academic help, ride sharing, study groups, and more. Build meaningful connections.",
-                gradient: "from-orange-500/20 to-yellow-500/20",
-                iconGradient: "from-orange-500 to-yellow-500",
+                gradient: "from-teal-600/10 to-teal-600/5",
+                iconColor: "bg-teal-600",
                 features: ["Study partners", "Skill sharing", "Event coordination"]
               },
               {
                 icon: Shield,
                 title: "Trust & Verification",
                 description: "University-verified profiles, ratings, and secure transactions ensure safety and reliability.",
-                gradient: "from-green-500/20 to-emerald-500/20",
-                iconGradient: "from-green-500 to-emerald-500",
+                gradient: "from-emerald-600/10 to-emerald-600/5",
+                iconColor: "bg-emerald-600",
                 features: ["ID verification", "Rating system", "Secure platform"]
               }
             ].map((feature, idx) => (
@@ -248,17 +246,17 @@ const Landing = () => {
                 key={idx}
                 data-animate
                 id={`feature-${idx}`}
-                className={`group p-8 rounded-3xl bg-gradient-to-br ${feature.gradient} backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all duration-700 hover:scale-105 cursor-pointer ${isVisible[`feature-${idx}`] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
+                className={`group p-8 rounded-3xl bg-gradient-to-br ${feature.gradient} backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer ${isVisible[`feature-${idx}`] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}
                 style={{ transitionDelay: `${idx * 100}ms` }}
               >
-                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.iconGradient} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-xl`}>
+                <div className={`w-16 h-16 rounded-2xl ${feature.iconColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-all shadow-xl`}>
                   <feature.icon className="w-8 h-8" />
                 </div>
                 <h3 className="text-2xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">{feature.description}</p>
+                <p className="text-gray-400 mb-6 leading-relaxed">{feature.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {feature.features.map((item, i) => (
-                    <span key={i} className="px-3 py-1 rounded-full bg-white/10 text-sm border border-white/20">
+                    <span key={i} className="px-3 py-1 rounded-full bg-white/5 text-sm border border-white/10 text-gray-300">
                       {item}
                     </span>
                   ))}
@@ -275,17 +273,17 @@ const Landing = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div data-animate id="story-content">
               <div className={`transition-all duration-1000 ${isVisible['story-content'] ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 mb-6">
-                  <HeartHandshake className="w-4 h-4 text-purple-400" />
-                  <span className="text-sm font-medium">Our Mission</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 mb-6">
+                  <HeartHandshake className="w-4 h-4 text-blue-400" />
+                  <span className="text-sm font-medium text-gray-300">Our Mission</span>
                 </div>
                 <h2 className="text-5xl font-bold mb-6 leading-tight">
                   Building a Culture of
-                  <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent"> Mutual Support</span>
+                  <span className="text-blue-400"> Mutual Support</span>
                 </h2>
-                <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+                <p className="text-xl text-gray-400 mb-8 leading-relaxed">
                   University life is full of small challenges. A lost ID, emergency book money, 
-                  or finding a study partner. HelaFund makes solving these problems effortless 
+                  or finding a study partner. Hela Fund makes solving these problems effortless 
                   through the power of community.
                 </p>
                 <div className="space-y-4">
@@ -295,8 +293,8 @@ const Landing = () => {
                     "Create lasting impact with small acts of kindness"
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-6 h-6 text-cyan-400 flex-shrink-0 mt-1" />
-                      <span className="text-gray-300 text-lg">{item}</span>
+                      <CheckCircle2 className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
+                      <span className="text-gray-400 text-lg">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -305,25 +303,24 @@ const Landing = () => {
             
             <div data-animate id="story-visual" className={`relative transition-all duration-1000 delay-300 ${isVisible['story-visual'] ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
               <div className="relative">
-                {/* Abstract visual composition */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-cyan-500/30 rounded-[3rem] blur-3xl" />
+                <div className="absolute inset-0 bg-blue-600/5 rounded-[3rem] blur-3xl" />
                 <div className="relative grid grid-cols-2 gap-6 p-8">
                   {[
-                    { icon: Search, label: "Lost Items Found", value: "2.3K+", color: "from-blue-500 to-cyan-500" },
-                    { icon: DollarSign, label: "Funds Raised", value: "$45K+", color: "from-purple-500 to-pink-500" },
-                    { icon: Users, label: "Active Students", value: "12K+", color: "from-orange-500 to-yellow-500" },
-                    { icon: HeartHandshake, label: "Acts of Help", value: "8.7K+", color: "from-green-500 to-emerald-500" }
+                    { icon: Search, label: "Lost Items Found", value: "2.3K+", color: "bg-blue-600" },
+                    { icon: DollarSign, label: "Funds Raised", value: "$45K+", color: "bg-slate-700" },
+                    { icon: Users, label: "Active Students", value: "12K+", color: "bg-teal-600" },
+                    { icon: HeartHandshake, label: "Acts of Help", value: "8.7K+", color: "bg-emerald-600" }
                   ].map((stat, idx) => (
                     <div 
                       key={idx}
-                      className="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 hover:scale-105 transition-all duration-300 cursor-pointer"
+                      className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:scale-105 transition-all duration-300 cursor-pointer"
                       style={{ animationDelay: `${idx * 100}ms` }}
                     >
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4 shadow-lg`}>
+                      <div className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center mb-4 shadow-lg`}>
                         <stat.icon className="w-6 h-6" />
                       </div>
                       <div className="text-2xl font-bold mb-1">{stat.value}</div>
-                      <div className="text-sm text-gray-400">{stat.label}</div>
+                      <div className="text-sm text-gray-500">{stat.label}</div>
                     </div>
                   ))}
                 </div>
@@ -338,18 +335,18 @@ const Landing = () => {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20" data-animate id="how-header">
             <h2 className={`text-5xl md:text-6xl font-bold mb-6 transition-all duration-1000 ${isVisible['how-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-white">
                 How It Works
               </span>
             </h2>
-            <p className={`text-xl text-gray-300 max-w-2xl mx-auto transition-all duration-1000 delay-100 ${isVisible['how-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <p className={`text-xl text-gray-400 max-w-2xl mx-auto transition-all duration-1000 delay-100 ${isVisible['how-header'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
               Getting help or helping others is just a few clicks away
             </p>
           </div>
 
           <div className="relative">
             {/* Connecting line */}
-            <div className="absolute top-24 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-500 to-purple-500 hidden lg:block opacity-30" />
+            <div className="absolute top-24 left-0 right-0 h-1 bg-blue-600/20 hidden lg:block" />
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
               {[
@@ -358,28 +355,28 @@ const Landing = () => {
                   title: "Sign Up",
                   description: "Create your account with university email verification",
                   icon: Users,
-                  color: "from-purple-500 to-pink-500"
+                  color: "bg-blue-600"
                 },
                 {
                   step: "02",
                   title: "Post or Browse",
                   description: "Create a request or browse existing community needs",
                   icon: Search,
-                  color: "from-cyan-500 to-blue-500"
+                  color: "bg-slate-700"
                 },
                 {
                   step: "03",
                   title: "Connect",
                   description: "Match with verified students and communicate securely",
                   icon: HeartHandshake,
-                  color: "from-orange-500 to-yellow-500"
+                  color: "bg-teal-600"
                 },
                 {
                   step: "04",
                   title: "Complete",
                   description: "Fulfill the request and build your trust score",
                   icon: Award,
-                  color: "from-green-500 to-emerald-500"
+                  color: "bg-emerald-600"
                 }
               ].map((step, idx) => (
                 <div
@@ -391,18 +388,18 @@ const Landing = () => {
                 >
                   <div className="relative group">
                     {/* Step number */}
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20 flex items-center justify-center font-bold text-2xl group-hover:scale-110 transition-all z-10">
-                      <span className={`bg-gradient-to-br ${step.color} bg-clip-text text-transparent`}>
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center font-bold text-2xl group-hover:scale-110 transition-all z-10">
+                      <span className="text-blue-400">
                         {step.step}
                       </span>
                     </div>
                     
-                    <div className="mt-12 p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/30 transition-all duration-500 hover:scale-105 cursor-pointer min-h-[280px] flex flex-col">
-                      <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl`}>
+                    <div className="mt-12 p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer min-h-[280px] flex flex-col">
+                      <div className={`w-14 h-14 rounded-2xl ${step.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-all shadow-xl`}>
                         <step.icon className="w-7 h-7" />
                       </div>
                       <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
-                      <p className="text-gray-300 leading-relaxed">{step.description}</p>
+                      <p className="text-gray-400 leading-relaxed">{step.description}</p>
                     </div>
                   </div>
                 </div>
@@ -415,9 +412,9 @@ const Landing = () => {
       {/* Impact Stats Section */}
       <section ref={statsRef} className="relative z-10 px-6 py-24">
         <div className="max-w-6xl mx-auto">
-          <div className="p-12 rounded-[3rem] bg-gradient-to-br from-purple-500/20 via-cyan-500/20 to-purple-500/20 backdrop-blur-xl border border-white/20 relative overflow-hidden">
+          <div className="p-12 rounded-[3rem] bg-blue-600/5 backdrop-blur-xl border border-white/10 relative overflow-hidden">
             {/* Background pattern */}
-            <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0 opacity-5">
               <div className="absolute top-0 left-0 w-full h-full" style={{
                 backgroundImage: `radial-gradient(circle, white 1px, transparent 1px)`,
                 backgroundSize: '30px 30px'
@@ -426,16 +423,16 @@ const Landing = () => {
             
             <div className="relative z-10">
               <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
-                  <TrendingUp className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm font-medium">Real-Time Impact</span>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 mb-6">
+                  <TrendingUp className="w-4 h-4 text-blue-400" />
+                  <span className="text-sm font-medium text-gray-300">Real-Time Impact</span>
                 </div>
                 <h2 className="text-5xl font-bold mb-4">
-                  <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                  <span className="text-white">
                     Making a Difference Together
                   </span>
                 </h2>
-                <p className="text-xl text-gray-300">Every day, students help each other succeed</p>
+                <p className="text-xl text-gray-400">Every day, students help each other succeed</p>
               </div>
 
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
@@ -447,14 +444,14 @@ const Landing = () => {
                 ].map((stat, idx) => (
                   <div key={idx} className="text-center group cursor-pointer">
                     <div className="mb-4 flex justify-center">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all shadow-xl">
+                      <div className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center group-hover:scale-110 transition-all shadow-xl">
                         <stat.icon className="w-8 h-8" />
                       </div>
                     </div>
-                    <div className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                    <div className="text-5xl font-bold mb-2 text-blue-400">
                       <AnimatedCounter end={stat.value} suffix={stat.suffix} />
                     </div>
-                    <div className="text-gray-300 font-medium">{stat.label}</div>
+                    <div className="text-gray-400 font-medium">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -467,20 +464,20 @@ const Landing = () => {
       <section className="relative z-10 px-6 py-32">
         <div className="max-w-5xl mx-auto text-center">
           <div data-animate id="cta-section" className={`transition-all duration-1000 ${isVisible['cta-section'] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30 mb-8">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              <span className="text-sm font-medium">Join the Movement</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 mb-8">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span className="text-sm font-medium text-gray-300">Join the Movement</span>
             </div>
             
             <h2 className="text-6xl md:text-7xl font-bold mb-8 leading-tight">
               Ready to Make
               <br />
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-blue-400">
                 an Impact?
               </span>
             </h2>
             
-            <p className="text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
               Join thousands of students who are building a stronger, more supportive 
               community. Your next act of kindness starts here.
             </p>
@@ -488,7 +485,7 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button 
                 onClick={() => navigate('/signup')}
-                className="group px-10 py-5 rounded-2xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 transition-all duration-300 font-bold text-xl shadow-2xl shadow-purple-500/50 hover:shadow-purple-500/70 hover:scale-105"
+                className="group px-10 py-5 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-all duration-200 font-bold text-xl shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30"
               >
                 <span className="flex items-center gap-2 justify-center">
                   Get Started Free
@@ -497,23 +494,23 @@ const Landing = () => {
               </button>
               <button 
                 onClick={() => navigate('/login')}
-                className="px-10 py-5 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 font-bold text-xl hover:scale-105"
+                className="px-10 py-5 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 font-bold text-xl"
               >
                 Sign In
               </button>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-8 text-gray-400">
+            <div className="flex flex-wrap justify-center gap-8 text-gray-500">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+                <CheckCircle2 className="w-5 h-5 text-blue-400" />
                 <span>No credit card required</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+                <CheckCircle2 className="w-5 h-5 text-blue-400" />
                 <span>University verified</span>
               </div>
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+                <CheckCircle2 className="w-5 h-5 text-blue-400" />
                 <span>100% secure</span>
               </div>
             </div>
@@ -526,15 +523,13 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-purple-500/50">
-                <HeartHandshake className="w-6 h-6" />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                HelaFund
+              <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-10 h-10" />
+              <span className="text-xl font-bold text-white">
+                Hela Fund
               </span>
             </div>
-            <div className="text-gray-400 text-sm">
-              © 2026 HelaFund. Building stronger communities, one act of kindness at a time.
+            <div className="text-gray-500 text-sm">
+              © 2026 Hela Fund. All rights reserved.
             </div>
           </div>
         </div>
