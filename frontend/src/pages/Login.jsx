@@ -244,7 +244,7 @@ const Login = () => {
                       className={`w-full pl-12 pr-4 py-3 border ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       } rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all`}
-                      placeholder="your.email@university.edu"
+                      placeholder="your.email@example.com"
                     />
                   </div>
                   {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}

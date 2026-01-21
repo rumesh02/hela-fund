@@ -63,8 +63,6 @@ const Signup = () => {
     'Sabaragamuwa University',
     'Wayamba University',
     'Uva Wellassa University',
-    'Open University of Sri Lanka',
-    'Buddhist and Pali University',
     'Other'
   ];
 
@@ -369,7 +367,7 @@ const Signup = () => {
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.fullName ? 'border-red-500' : 'border-gray-300'
                         } rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                        placeholder="John Doe"
+                        placeholder="Enter your Full Name"
                       />
                     </div>
                     {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
@@ -441,7 +439,7 @@ const Signup = () => {
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.faculty ? 'border-red-500' : 'border-gray-300'
                         } rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                        placeholder="e.g., Engineering, Medicine, Arts"
+                        placeholder="Engineering, Medicine, IT, etc."
                       />
                     </div>
                     {errors.faculty && <p className="mt-1 text-sm text-red-600">{errors.faculty}</p>}
@@ -464,7 +462,7 @@ const Signup = () => {
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.studentId ? 'border-red-500' : 'border-gray-300'
                         } rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                        placeholder="e.g., 2023/CS/001"
+                        placeholder="Enter your Student ID Number"
                       />
                     </div>
                     {errors.studentId && <p className="mt-1 text-sm text-red-600">{errors.studentId}</p>}
@@ -532,7 +530,7 @@ const Signup = () => {
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.nic ? 'border-red-500' : 'border-gray-300'
                         } rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                        placeholder="e.g., 123456789V or 200012345678"
+                        placeholder="123456789V or 200012345678"
                       />
                     </div>
                     {errors.nic && <p className="mt-1 text-sm text-red-600">{errors.nic}</p>}
@@ -581,7 +579,7 @@ const Signup = () => {
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.name ? 'border-red-500' : 'border-gray-300'
                         } rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all`}
-                        placeholder="John Doe"
+                        placeholder="Enter your Full Name"
                       />
                     </div>
                     {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
@@ -627,7 +625,7 @@ const Signup = () => {
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.nic ? 'border-red-500' : 'border-gray-300'
                         } rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all`}
-                        placeholder="e.g., 123456789V or 200012345678"
+                        placeholder="123456789V or 200012345678"
                       />
                     </div>
                     {errors.nic && <p className="mt-1 text-sm text-red-600">{errors.nic}</p>}
