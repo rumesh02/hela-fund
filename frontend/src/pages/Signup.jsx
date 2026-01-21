@@ -247,76 +247,65 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 py-12 px-4">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-fuchsia-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-0 left-1/2 w-96 h-96 bg-violet-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-6 px-4 flex items-center">
 
-      <div className="max-w-2xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10 w-full">
         {/* Header */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 mb-4">
-            <Heart className="w-8 h-8" />
-            <h1 className="text-3xl font-bold">Hela Fund</h1>
+        <div className="text-center mb-6">
+          <Link to="/" className="inline-flex items-center gap-3 text-slate-800 hover:text-slate-900 mb-3">
+            <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-30 h-30" />
           </Link>
-          <h2 className="text-4xl font-bold text-gray-800 mb-2">Create Account</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-1">Create Account</h2>
           <p className="text-gray-600">Join our community and make a difference</p>
         </div>
 
         {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+        <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-8">
           {!role ? (
             /* Role Selection */
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">Choose Your Role</h3>
+            <div className="space-y-4">
+              <div className="text-center mb-4">
+                <h3 className="text-2xl font-bold text-gray-800 mb-1">Choose Your Role</h3>
                 <p className="text-gray-600">How would you like to participate?</p>
               </div>
 
-              <button
-                onClick={() => handleRoleSelect('requester')}
-                className="w-full group relative overflow-hidden bg-gradient-to-r from-blue-500 via-cyan-500 to-teal-500 hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600 text-white rounded-2xl p-8 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl"
-              >
-                <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <div className="relative">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
-                      <GraduationCap className="w-12 h-12" />
+              <div className="grid md:grid-cols-2 gap-4">
+                <button
+                  onClick={() => handleRoleSelect('requester')}
+                  className="group bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-6 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  <div className="flex items-center justify-center mb-3">
+                    <div className="bg-blue-500 p-3 rounded-2xl">
+                      <GraduationCap className="w-10 h-10" />
                     </div>
                   </div>
-                  <h3 className="font-bold text-2xl mb-2">Requester</h3>
-                  <p className="text-blue-100 mb-4">I am a university student seeking financial support</p>
+                  <h3 className="font-bold text-xl mb-2">Requester</h3>
+                  <p className="text-blue-100 mb-3 text-sm">I am a university student seeking financial support</p>
                   <div className="flex items-center justify-center gap-2 text-sm">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Verified student accounts only</span>
                   </div>
-                </div>
-              </button>
+                </button>
 
-              <button
-                onClick={() => handleRoleSelect('supporter')}
-                className="w-full group relative overflow-hidden bg-gradient-to-r from-rose-500 via-pink-500 to-fuchsia-500 hover:from-rose-600 hover:via-pink-600 hover:to-fuchsia-600 text-white rounded-2xl p-8 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl"
-              >
-                <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <div className="relative">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
-                      <Heart className="w-12 h-12" />
+                <button
+                  onClick={() => handleRoleSelect('supporter')}
+                  className="group bg-teal-600 hover:bg-teal-700 text-white rounded-2xl p-6 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  <div className="flex items-center justify-center mb-3">
+                    <div className="bg-teal-500 p-3 rounded-2xl">
+                      <Heart className="w-10 h-10" />
                     </div>
                   </div>
-                  <h3 className="font-bold text-2xl mb-2">Supporter</h3>
-                  <p className="text-rose-100 mb-4">I want to help students in need</p>
+                  <h3 className="font-bold text-xl mb-2">Supporter</h3>
+                  <p className="text-teal-100 mb-3 text-sm">I want to help students in need</p>
                   <div className="flex items-center justify-center gap-2 text-sm">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Make a difference today</span>
                   </div>
-                </div>
-              </button>
-
-              <div className="mt-8 text-center pt-6 border-t border-gray-200">
+                </button>
+              </div>
+              
+              <div className="mt-6 text-center pt-4 border-t border-gray-200">
                 <p className="text-gray-600">
                   Already have an account?{' '}
                   <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold hover:underline">
@@ -332,8 +321,8 @@ const Signup = () => {
               <div className="flex items-center justify-between mb-6 pb-6 border-b border-gray-200">
                 <div className={`flex items-center gap-3 px-5 py-3 rounded-full ${
                   role === 'requester' 
-                    ? 'bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-700' 
-                    : 'bg-gradient-to-r from-rose-100 to-pink-100 text-rose-700'
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'bg-teal-100 text-teal-700'
                 }`}>
                   {role === 'requester' ? <GraduationCap className="w-5 h-5" /> : <Heart className="w-5 h-5" />}
                   <span className="font-bold text-lg capitalize">{role} Registration</span>
@@ -578,7 +567,7 @@ const Signup = () => {
                         onChange={handleChange}
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.name ? 'border-red-500' : 'border-gray-300'
-                        } rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all`}
+                        } rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all`}
                         placeholder="Enter your Full Name"
                       />
                     </div>
@@ -601,7 +590,7 @@ const Signup = () => {
                         onChange={handleChange}
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.email ? 'border-red-500' : 'border-gray-300'
-                        } rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all`}
+                        } rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all`}
                         placeholder="your.email@example.com"
                       />
                     </div>
@@ -624,7 +613,7 @@ const Signup = () => {
                         onChange={handleChange}
                         className={`w-full pl-12 pr-4 py-3 border ${
                           errors.nic ? 'border-red-500' : 'border-gray-300'
-                        } rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all`}
+                        } rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all`}
                         placeholder="123456789V or 200012345678"
                       />
                     </div>
@@ -650,7 +639,7 @@ const Signup = () => {
                     className={`w-full pl-12 pr-12 py-3 border ${
                       errors.password ? 'border-red-500' : 'border-gray-300'
                     } rounded-xl focus:ring-2 ${
-                      role === 'requester' ? 'focus:ring-blue-500' : 'focus:ring-rose-500'
+                      role === 'requester' ? 'focus:ring-blue-500' : 'focus:ring-teal-500'
                     } focus:border-transparent transition-all`}
                     placeholder="••••••••"
                   />
@@ -686,7 +675,7 @@ const Signup = () => {
                     className={`w-full pl-12 pr-12 py-3 border ${
                       errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                     } rounded-xl focus:ring-2 ${
-                      role === 'requester' ? 'focus:ring-blue-500' : 'focus:ring-rose-500'
+                      role === 'requester' ? 'focus:ring-blue-500' : 'focus:ring-teal-500'
                     } focus:border-transparent transition-all`}
                     placeholder="••••••••"
                   />
@@ -711,9 +700,9 @@ const Signup = () => {
                   type="checkbox"
                   id="terms"
                   className={`w-5 h-5 mt-1 ${
-                    role === 'requester' ? 'text-blue-600' : 'text-rose-600'
+                    role === 'requester' ? 'text-blue-600' : 'text-teal-600'
                   } border-gray-300 rounded focus:ring-2 ${
-                    role === 'requester' ? 'focus:ring-blue-500' : 'focus:ring-rose-500'
+                    role === 'requester' ? 'focus:ring-blue-500' : 'focus:ring-teal-500'
                   }`}
                   required
                 />
@@ -733,10 +722,10 @@ const Signup = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full py-4 px-6 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`w-full py-4 px-6 rounded-xl text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                   role === 'requester'
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
-                    : 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600'
+                    ? 'bg-blue-600 hover:bg-blue-700'
+                    : 'bg-teal-600 hover:bg-teal-700'
                 }`}
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
@@ -763,23 +752,6 @@ const Signup = () => {
           )}
         </div>
       </div>
-
-      <style>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
     </div>
   );
 };

@@ -89,22 +89,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
 
       <div className="w-full max-w-6xl relative z-10">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left Side - Branding */}
           <div className="hidden md:block text-white">
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl p-12 shadow-2xl">
+            <div className="bg-slate-800 rounded-3xl p-12 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
-                <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                  <HeartHandshake className="w-8 h-8" />
+                <div className="bg-white p-2 rounded-xl">
+                  <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-10 h-10" />
                 </div>
                 <h1 className="text-3xl font-bold">Hela Fund</h1>
               </div>
@@ -113,34 +107,34 @@ const Login = () => {
                 Welcome Back to Your Community
               </h2>
               
-              <p className="text-lg text-indigo-100 mb-8">
+              <p className="text-lg text-gray-300 mb-8">
                 Continue your journey of making a difference. Whether you're seeking support or offering help, your community is here.
               </p>
 
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm mt-1">
+                  <div className="bg-slate-700 p-2 rounded-lg mt-1">
                     <Shield className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Secure & Private</h3>
-                    <p className="text-sm text-indigo-100">Your data is protected with industry-standard encryption</p>
+                    <p className="text-sm text-gray-300">Your data is protected with industry-standard encryption</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start gap-4">
-                  <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm mt-1">
+                  <div className="bg-slate-700 p-2 rounded-lg mt-1">
                     <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">Instant Access</h3>
-                    <p className="text-sm text-indigo-100">Get started immediately after logging in</p>
+                    <p className="text-sm text-gray-300">Get started immediately after logging in</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-12 pt-8 border-t border-white/20">
-                <p className="text-sm text-indigo-100">
+              <div className="mt-12 pt-8 border-t border-slate-700">
+                <p className="text-sm text-gray-300">
                   "Hela Fund has transformed how our university community supports each other. It's more than a platform—it's a movement."
                 </p>
                 <p className="text-sm font-semibold mt-2">- University Student Community</p>
@@ -161,12 +155,11 @@ const Login = () => {
                 
                 <button
                   onClick={() => handleRoleSelect('requester')}
-                  className="w-full group relative overflow-hidden bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-2xl p-6 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="w-full group bg-blue-600 hover:bg-blue-700 text-white rounded-2xl p-6 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
-                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  <div className="relative flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
+                      <div className="bg-blue-500 p-3 rounded-xl">
                         <GraduationCap className="w-8 h-8" />
                       </div>
                       <div className="text-left">
@@ -180,17 +173,16 @@ const Login = () => {
 
                 <button
                   onClick={() => handleRoleSelect('supporter')}
-                  className="w-full group relative overflow-hidden bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white rounded-2xl p-6 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="w-full group bg-teal-600 hover:bg-teal-700 text-white rounded-2xl p-6 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
-                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  <div className="relative flex items-center justify-between">
+                  <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
+                      <div className="bg-teal-500 p-3 rounded-xl">
                         <Heart className="w-8 h-8" />
                       </div>
                       <div className="text-left">
                         <h3 className="font-bold text-xl">Supporter</h3>
-                        <p className="text-sm text-rose-100">Ready to help those in need</p>
+                        <p className="text-sm text-teal-100">Ready to help those in need</p>
                       </div>
                     </div>
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
@@ -213,7 +205,7 @@ const Login = () => {
                   <div className={`flex items-center gap-2 px-4 py-2 rounded-full ${
                     role === 'requester' 
                       ? 'bg-blue-100 text-blue-700' 
-                      : 'bg-rose-100 text-rose-700'
+                      : 'bg-teal-100 text-teal-700'
                   }`}>
                     {role === 'requester' ? <GraduationCap className="w-4 h-4" /> : <Heart className="w-4 h-4" />}
                     <span className="font-semibold capitalize">{role}</span>
@@ -302,10 +294,10 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full py-4 px-6 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full py-4 px-6 rounded-xl text-white font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                     role === 'requester'
-                      ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600'
-                      : 'bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600'
+                      ? 'bg-blue-600 hover:bg-blue-700'
+                      : 'bg-teal-600 hover:bg-teal-700'
                   }`}
                 >
                   {isLoading ? 'Signing In...' : 'Sign In'}
@@ -336,28 +328,11 @@ const Login = () => {
 
       {/* Mobile Logo */}
       <div className="md:hidden absolute top-8 left-1/2 transform -translate-x-1/2">
-        <div className="flex items-center gap-2 text-indigo-600">
-          <HeartHandshake className="w-8 h-8" />
+        <div className="flex items-center gap-2 text-slate-800">
+          <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-8 h-8" />
           <h1 className="text-2xl font-bold">Hela Fund</h1>
         </div>
       </div>
-
-      <style>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
     </div>
   );
 };
