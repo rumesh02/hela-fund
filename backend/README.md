@@ -4,13 +4,14 @@ A RESTful API built with Node.js, Express.js, and MongoDB for the Hela Fund plat
 
 ## Features
 
-- User authentication and authorization with JWT
-- Request management (create, read, update, delete)
-- Contribution tracking
-- Messaging system
-- Role-based access control (Requester/Supporter)
-- Input validation and error handling
-- MongoDB integration with Mongoose
+- **Role-based Authentication** - Requester (students) and Supporter user types
+- **JWT-based Authorization** - Secure token-based authentication
+- **Request Management** - Create, read, update, delete funding requests
+- **Contribution Tracking** - Track and manage contributions
+- **Messaging System** - Communication between requesters and supporters
+- **Advanced Role Access Control** - Requesters can access both portals, supporters restricted
+- **Input Validation** - Comprehensive validation with express-validator
+- **MongoDB Integration** - Mongoose ODM with conditional field validation
 
 ## Tech Stack
 
@@ -21,6 +22,47 @@ A RESTful API built with Node.js, Express.js, and MongoDB for the Hela Fund plat
 - **Validation**: express-validator
 - **Security**: bcryptjs for password hashing
 - **Environment**: dotenv for configuration
+
+## 🆕 Authentication System (Updated)
+
+### User Roles
+
+1. **Requester (University Students)**
+   - Can login as both requester and supporter
+   - Required fields: fullName, email, password, university, faculty, studentId, studentIdImage, nic, mobile
+
+2. **Supporter (Financial Contributors)**
+   - Can only login as supporter
+   - Required fields: name, email, password, nic
+
+### Role-Based Access Logic
+
+```
+┌─────────────┬──────────────────┬──────────────────┐
+│ User Role   │ Can Access       │ Cannot Access    │
+├─────────────┼──────────────────┼──────────────────┤
+│ Requester   │ Both portals ✓   │ None             │
+│ Supporter   │ Supporter only ✓ │ Requester portal │
+└─────────────┴──────────────────┴──────────────────┘
+```
+
+### Quick Test
+
+Seed the database with sample users:
+
+```bash
+npm run seed
+```
+
+This creates 4 test users:
+- **Requesters**: requester1@university.edu, requester2@university.edu
+- **Supporters**: supporter1@email.com, supporter2@email.com
+- **Password**: password123 (for all users)
+
+Clear database:
+```bash
+npm run seed:clear
+```
 
 ## Getting Started
 
@@ -70,10 +112,12 @@ The API will be available at `http://localhost:5000`
 
 ### Authentication
 
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
+- `POST /api/auth/register` - Register new user (requester or supporter)
+- `POST /api/auth/login` - Login user (with role validation)
 - `GET /api/auth/me` - Get current user (protected)
 - `PUT /api/auth/profile` - Update user profile (protected)
+
+**See [AUTH_API_DOCUMENTATION.md](./AUTH_API_DOCUMENTATION.md) for detailed authentication documentation**
 
 ### Users
 
@@ -128,12 +172,21 @@ Error response:
 
 ## Database Models
 
-### User
+### User (Updated Schema)
 
-- name, email, password (hashed)
-- role (requester/supporter/both)
-- profile information (phone, avatar, bio, location)
-- statistics (totalContributions, totalRequests)
+**Common Fields:**
+- email (unique, required), password (hashed, required)
+- nic (National ID, required), role (requester/supporter, required)
+- avatar, bio, isVerified, timestamps
+
+**Requester-Specific:**
+- fullName, university, faculty, studentId, studentIdImage
+- mobile, totalRequests
+
+**Supporter-Specific:**
+- name, totalContributions
+
+**Note:** Field requirements are conditional based on the user's role.
 
 ### Request
 
@@ -168,11 +221,59 @@ Error response:
 
 ## Development
 
-Run in development mode with auto-restart:
+### Available Scripts
 
 ```bash
+# Start server in production mode
+npm start
+
+# Start server in development mode with auto-restart
 npm run dev
+
+# Seed database with sample users
+npm run seed
+
+# Clear all users from database
+npm run seed:clear
 ```
+
+### Project Structure
+
+```
+backend/
+├── config/
+│   └── database.js          # MongoDB connection
+├── controllers/
+│   ├── auth.controller.js   # Authentication logic (updated)
+│   ├── user.controller.js   # User management
+│   ├── request.controller.js
+│   ├── contribution.controller.js
+│   └── message.controller.js
+├── models/
+│   ├── User.model.js        # User schema (updated with roles)
+│   ├── Request.model.js
+│   ├── Contribution.model.js
+│   └── Message.model.js
+├── routes/
+│   ├── auth.routes.js       # Auth endpoints (updated validation)
+│   ├── user.routes.js
+│   ├── request.routes.js
+│   ├── contribution.routes.js
+│   └── message.routes.js
+├── middleware/
+│   ├── auth.middleware.js   # JWT verification
+│   └── error.middleware.js  # Error handling
+├── utils/
+│   ├── validators.js        # Validation helpers (NEW)
+│   └── seeder.js            # Database seeder (NEW)
+├── server.js                # Entry point
+└── package.json
+```
+
+### Documentation
+
+- [AUTH_API_DOCUMENTATION.md](./AUTH_API_DOCUMENTATION.md) - Complete authentication API reference
+- [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) - Implementation details and changes
 
 ## Environment Variables
 

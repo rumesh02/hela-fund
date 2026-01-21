@@ -2,6 +2,9 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+// API Base URL
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -38,57 +41,108 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   const login = async (email, password, role) => {
-    // TODO: Replace with actual API call
-    // For now, simulating authentication
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, role }),
+      });
 
-    // Mock user data
-    const mockUser = {
-      id: '1',
-      email,
-      role,
-      // If user is a requester (student), they have both roles available
-      accountType: role === 'requester' ? 'student' : 'supporter',
-      name: email.split('@')[0],
-      createdAt: new Date().toISOString()
-    };
+      const data = await response.json();
 
-    setUser(mockUser);
-    return mockUser;
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Store token
+      localStorage.setItem('token', data.data.token);
+
+      // Create user object
+      const userData = {
+        id: data.data._id,
+        email: data.data.email,
+        role: data.data.role, // Actual user role in database
+        loginRole: data.data.loginRole, // Role they're logging in as
+        name: data.data.name,
+        avatar: data.data.avatar,
+        accountType: data.data.role === 'supporter' ? 'supporter' : 'student',
+        token: data.data.token,
+      };
+
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const signup = async (formData, role) => {
-    // TODO: Replace with actual API call
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Mock user creation
-    const mockUser = {
-      id: '1',
-      email: formData.email,
-      role,
-      accountType: role === 'requester' ? 'student' : 'supporter',
-      name: role === 'requester' ? formData.fullName : formData.name,
-      ...(role === 'requester' && {
-        university: formData.university,
-        faculty: formData.faculty,
-        studentId: formData.studentId,
+    try {
+      // Prepare data based on role
+      let registrationData = {
+        email: formData.email,
+        password: formData.password,
+        role: role,
         nic: formData.nic,
-        mobile: formData.mobile
-      }),
-      createdAt: new Date().toISOString()
-    };
+      };
 
-    setUser(mockUser);
-    return mockUser;
+      // Add role-specific fields
+      if (role === 'requester') {
+        registrationData = {
+          ...registrationData,
+          fullName: formData.fullName,
+          university: formData.university,
+          faculty: formData.faculty,
+          studentId: formData.studentId,
+          mobile: formData.mobile,
+          // Note: studentIdImage will need to be handled separately with file upload
+          studentIdImage: formData.studentIdImage ? 'uploaded' : '', // Placeholder for now
+        };
+      } else if (role === 'supporter') {
+        registrationData = {
+          ...registrationData,
+          name: formData.name,
+        };
+      }
+
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(registrationData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
+
+      if (!data.success) {
+        throw new Error(data.message || 'Registration failed');
+      }
+
+      // Don't auto-login after registration
+      // User will need to login manually
+      return data.data;
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   const switchRole = (newRole) => {

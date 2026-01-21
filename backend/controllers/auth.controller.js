@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import User from '../models/User.model.js';
+import { checkRoleAccess, isValidRole } from '../utils/validators.js';
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -23,7 +24,7 @@ export const register = async (req, res) => {
       });
     }
 
-    const { name, email, password, role } = req.body;
+    const { email, password, role, ...otherFields } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -34,27 +35,58 @@ export const register = async (req, res) => {
       });
     }
 
-    // Create user
-    const user = await User.create({
-      name,
+    // Validate role
+    if (!role || !isValidRole(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role. Must be either requester or supporter'
+      });
+    }
+
+    // Prepare user data based on role
+    let userData = {
       email,
       password,
-      role: role || 'requester'
-    });
+      role,
+      nic: otherFields.nic
+    };
+
+    if (role === 'requester') {
+      // Requester-specific fields
+      userData = {
+        ...userData,
+        fullName: otherFields.fullName,
+        university: otherFields.university,
+        faculty: otherFields.faculty,
+        studentId: otherFields.studentId,
+        studentIdImage: otherFields.studentIdImage, // Handle file upload separately
+        mobile: otherFields.mobile
+      };
+    } else if (role === 'supporter') {
+      // Supporter-specific fields
+      userData = {
+        ...userData,
+        name: otherFields.name
+      };
+    }
+
+    // Create user
+    const user = await User.create(userData);
 
     if (user) {
       res.status(201).json({
         success: true,
         data: {
           _id: user._id,
-          name: user.name,
           email: user.email,
           role: user.role,
+          name: user.role === 'supporter' ? user.name : user.fullName,
           token: generateToken(user._id)
         }
       });
     }
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -76,7 +108,15 @@ export const login = async (req, res) => {
       });
     }
 
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
+
+    // Validate that role is provided
+    if (!role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please select a role (requester or supporter)'
+      });
+    }
 
     // Check for user
     const user = await User.findOne({ email }).select('+password');
@@ -96,18 +136,32 @@ export const login = async (req, res) => {
       });
     }
 
+    // Role-based login validation
+    // Requester can login as both requester and supporter
+    // Supporter can only login as supporter
+    const roleAccessCheck = checkRoleAccess(user.role, role);
+    
+    if (!roleAccessCheck.canAccess) {
+      return res.status(403).json({
+        success: false,
+        message: roleAccessCheck.message
+      });
+    }
+
     res.json({
       success: true,
       data: {
         _id: user._id,
-        name: user.name,
         email: user.email,
         role: user.role,
+        loginRole: role, // The role they're logging in as
+        name: user.role === 'supporter' ? user.name : user.fullName,
         avatar: user.avatar,
         token: generateToken(user._id)
       }
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({
       success: false,
       message: error.message
@@ -148,14 +202,20 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    const { name, email, phone, bio, location, avatar } = req.body;
+    const { email, bio, avatar, mobile, name, fullName } = req.body;
 
-    user.name = name || user.name;
+    // Common fields
     user.email = email || user.email;
-    user.phone = phone || user.phone;
     user.bio = bio || user.bio;
-    user.location = location || user.location;
     user.avatar = avatar || user.avatar;
+
+    // Role-specific fields
+    if (user.role === 'requester') {
+      user.fullName = fullName || user.fullName;
+      user.mobile = mobile || user.mobile;
+    } else if (user.role === 'supporter') {
+      user.name = name || user.name;
+    }
 
     const updatedUser = await user.save();
 

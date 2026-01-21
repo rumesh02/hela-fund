@@ -2,16 +2,13 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please add a name'],
-    trim: true
-  },
+  // Common fields for both roles
   email: {
     type: String,
     required: [true, 'Please add an email'],
     unique: true,
     lowercase: true,
+    trim: true,
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Please add a valid email'
@@ -23,15 +20,78 @@ const userSchema = new mongoose.Schema({
     minlength: 6,
     select: false
   },
+  nic: {
+    type: String,
+    required: [true, 'Please add NIC number'],
+    trim: true,
+    match: [
+      /^([0-9]{9}[x|X|v|V]|[0-9]{12})$/,
+      'Please add a valid NIC number'
+    ]
+  },
   role: {
     type: String,
-    enum: ['requester', 'supporter', 'both'],
-    default: 'requester'
+    enum: ['requester', 'supporter'],
+    required: [true, 'Please specify a role']
   },
-  phone: {
+  
+  // Requester-specific fields
+  fullName: {
     type: String,
-    trim: true
+    trim: true,
+    required: function() {
+      return this.role === 'requester';
+    }
   },
+  university: {
+    type: String,
+    trim: true,
+    required: function() {
+      return this.role === 'requester';
+    }
+  },
+  faculty: {
+    type: String,
+    trim: true,
+    required: function() {
+      return this.role === 'requester';
+    }
+  },
+  studentId: {
+    type: String,
+    trim: true,
+    required: function() {
+      return this.role === 'requester';
+    }
+  },
+  studentIdImage: {
+    type: String, // Store the file path or URL
+    required: function() {
+      return this.role === 'requester';
+    }
+  },
+  mobile: {
+    type: String,
+    trim: true,
+    required: function() {
+      return this.role === 'requester';
+    },
+    match: [
+      /^0[0-9]{9}$/,
+      'Please add a valid mobile number'
+    ]
+  },
+  
+  // Supporter-specific fields
+  name: {
+    type: String,
+    trim: true,
+    required: function() {
+      return this.role === 'supporter';
+    }
+  },
+  
+  // Optional fields
   avatar: {
     type: String,
     default: ''
@@ -39,10 +99,6 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String,
     maxlength: 500
-  },
-  location: {
-    city: String,
-    country: String
   },
   isVerified: {
     type: Boolean,
@@ -55,10 +111,6 @@ const userSchema = new mongoose.Schema({
   totalRequests: {
     type: Number,
     default: 0
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   }
 }, {
   timestamps: true
