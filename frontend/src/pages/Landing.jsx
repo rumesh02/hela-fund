@@ -11,7 +11,9 @@ import {
   TrendingUp,
   Clock,
   HandHeart,
-  Award
+  Award,
+  Mail,
+  Send
 } from 'lucide-react';
 
 const Landing = () => {
@@ -20,6 +22,13 @@ const Landing = () => {
   const [isVisible, setIsVisible] = useState({});
   const statsRef = useRef(null);
   const [statsAnimated, setStatsAnimated] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,41 +140,61 @@ const Landing = () => {
 
       {/* Hero Section */}
       <section className="relative z-10 px-6 pt-20 pb-32">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 backdrop-blur-sm border border-blue-600/20 mb-8 animate-fade-in">
-            <Sparkles className="w-4 h-4 text-blue-400" />
-            <span className="text-sm font-medium text-gray-300">Empowering Student Communities</span>
-          </div>
-          
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight animate-slide-up">
-            <span className="text-white">
-              Help Each Other.
-            </span>
-            <br />
-            <span className="text-blue-400">Build Together.</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed animate-slide-up delay-100">
-            A micro help & support platform where university students can find lost items, 
-            fund small needs, and build a stronger community through trust and collaboration.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-200">
-            <button 
-              onClick={() => navigate('/signup')}
-              className="group px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-all duration-200 font-semibold text-lg shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30"
-            >
-              <span className="flex items-center gap-2 justify-center">
-                Start Helping Now
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </button>
-            <button 
-              onClick={() => navigate('/login')}
-              className="px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 font-semibold text-lg"
-            >
-              Sign In
-            </button>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Logo */}
+            <div className="flex items-center justify-center animate-fade-in">
+              <div className="relative" style={{ perspective: '1000px' }}>
+                <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
+                <img 
+                  src="/images/logoCircle.png" 
+                  alt="Hela Fund Logo" 
+                  className="relative w-full max-w-sm h-auto drop-shadow-2xl transition-transform duration-700 ease-in-out"
+                  style={{ transform: 'rotateY(0deg)', transformStyle: 'preserve-3d' }}
+                  onMouseEnter={(e) => e.currentTarget.style.transform = 'rotateY(360deg)'}
+                  onMouseLeave={(e) => e.currentTarget.style.transform = 'rotateY(0deg)'}
+                />
+              </div>
+            </div>
+
+            {/* Right Side - Content */}
+            <div className="text-left">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 backdrop-blur-sm border border-blue-600/20 mb-8 animate-fade-in">
+                <Sparkles className="w-4 h-4 text-blue-400" />
+                <span className="text-sm font-medium text-gray-300">Empowering Student Communities</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight animate-slide-up">
+                <span className="text-white">
+                  Help Each Other.
+                </span>
+                <br />
+                <span className="text-blue-400">Build Together.</span>
+              </h1>
+              
+              <p className="text-lg md:text-xl text-gray-400 mb-12 leading-relaxed animate-slide-up delay-100">
+                A micro help & support platform where university students can find lost items, 
+                fund small needs, and build a stronger community through trust and collaboration.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 animate-slide-up delay-200">
+                <button 
+                  onClick={() => navigate('/signup')}
+                  className="group px-8 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 transition-all duration-200 font-semibold text-lg shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30"
+                >
+                  <span className="flex items-center gap-2 justify-center">
+                    Start Helping Now
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </button>
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="px-8 py-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-200 font-semibold text-lg"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -514,6 +543,117 @@ const Landing = () => {
                 <span>100% secure</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Us Section */}
+      <section className="relative z-10 px-6 py-24 bg-gradient-to-br from-slate-800/50 to-slate-900/50">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600/10 backdrop-blur-sm border border-blue-600/20 mb-6">
+              <Mail className="w-4 h-4 text-blue-400" />
+              <span className="text-sm font-medium text-gray-300">Get In Touch</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+              Contact Us
+            </h2>
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+              Have questions or feedback? We'd love to hear from you.
+            </p>
+          </div>
+
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12">
+            {submitStatus === 'success' && (
+              <div className="mb-6 p-4 rounded-xl bg-green-600/20 border border-green-600/30 text-green-300 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5" />
+                <span>Thank you! We'll get back to you soon.</span>
+              </div>
+            )}
+            {submitStatus === 'error' && (
+              <div className="mb-6 p-4 rounded-xl bg-red-600/20 border border-red-600/30 text-red-300">
+                Something went wrong. Please try again.
+              </div>
+            )}
+
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                setIsSubmitting(true);
+                // Simulate form submission
+                setTimeout(() => {
+                  setSubmitStatus('success');
+                  setIsSubmitting(false);
+                  setContactForm({ name: '', email: '', message: '' });
+                  setTimeout(() => setSubmitStatus(null), 5000);
+                }, 1000);
+              }}
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={contactForm.name}
+                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-white placeholder-gray-500"
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-white placeholder-gray-500"
+                    placeholder="name@university.edu"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+                  Your Message
+                </label>
+                <textarea
+                  id="message"
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                  required
+                  rows="5"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-white placeholder-gray-500 resize-none"
+                  placeholder="Tell us what's on your mind..."
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full md:w-auto px-81 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 disabled:cursor-not-allowed transition-all duration-200 font-semibold text-lg shadow-lg shadow-blue-600/20 hover:shadow-blue-600/30 flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </section>

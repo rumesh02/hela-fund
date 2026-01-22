@@ -47,8 +47,8 @@ const requestSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    default: 'Rupees',
-    enum: ['Rupees', 'USD', 'EUR', 'GBP', 'INR', 'NGN']
+    default: 'LKR',
+    enum: ['LKR', 'USD', 'EUR', 'GBP', 'INR', 'NGN']
   },
   // Proof document (placeholder for now)
   proofDocument: {

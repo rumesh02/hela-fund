@@ -1,10 +1,12 @@
 import { FileText, Clock, CheckCircle, XCircle, TrendingUp, Banknote } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const stats = [
     {
       title: 'Total Requests',
-      value: '24',
+      value: '11',
       icon: FileText,
       color: 'bg-blue-600',
       textColor: 'text-blue-700',
@@ -13,7 +15,7 @@ const Dashboard = () => {
     },
     {
       title: 'Pending Requests',
-      value: '8',
+      value: '3',
       icon: Clock,
       color: 'bg-amber-500',
       textColor: 'text-amber-700',
@@ -22,7 +24,7 @@ const Dashboard = () => {
     },
     {
       title: 'Completed Requests',
-      value: '14',
+      value: '7',
       icon: CheckCircle,
       color: 'bg-emerald-500',
       textColor: 'text-emerald-700',
@@ -31,7 +33,7 @@ const Dashboard = () => {
     },
     {
       title: 'Rejected Requests',
-      value: '2',
+      value: '1',
       icon: XCircle,
       color: 'bg-rose-500',
       textColor: 'text-rose-700',
@@ -71,7 +73,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 space-y-6">
       {/* Page Header */}
       <div className="bg-white border-l-4 border-blue-600 rounded-xl shadow-md p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Welcome Back, Requester!</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Welcome Back, {user?.name || 'Requester'}!</h1>
         <p className="text-gray-600 mt-1">Here's an overview of your requests and activity.</p>
       </div>
 
@@ -115,11 +117,11 @@ const Dashboard = () => {
                   <h3 className="font-semibold text-gray-900 text-lg">{request.title}</h3>
                   <div className="flex items-center gap-3 mt-2 text-sm text-gray-600">
                     <span className="px-3 py-1 bg-white rounded-lg text-xs font-medium border border-gray-200 shadow-sm">{request.category}</span>
-                    <span className="font-medium">📅 {request.date}</span>
+                    <span className="font-medium"> {request.date}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span
+                  {/* <span
                     className={`px-4 py-2 rounded-xl text-xs font-bold shadow-sm ${
                       request.urgency === 'High'
                         ? 'bg-rose-100 text-rose-700 border border-rose-200'
@@ -138,7 +140,7 @@ const Dashboard = () => {
                     }`}
                   >
                     {request.status}
-                  </span>
+                  </span> */}
                 </div>
               </div>
             ))}
@@ -153,7 +155,7 @@ const Dashboard = () => {
               <h3 className="text-xl font-bold">Trust Score</h3>
               <TrendingUp size={28} strokeWidth={2.5} />
             </div>
-            <div className="text-6xl font-bold mb-3">85</div>
+            <div className="text-6xl font-bold mb-3">93</div>
             <p className="text-blue-100 text-base font-medium mb-6">Excellent! Keep up the good work!</p>
             <div className="bg-white bg-opacity-20 rounded-full h-3">
               <div className="bg-white rounded-full h-3 shadow-lg" style={{ width: '85%' }}></div>
@@ -161,14 +163,14 @@ const Dashboard = () => {
           </div>
 
           {/* Total Funds Received */}
-          <div className="bg-white rounded-2xl shadow-lg border border-emerald-100 p-8">
+          <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">Total Funds</h3>
-              <div className="bg-emerald-50 p-3 rounded-xl">
-                <Banknote className="text-emerald-600" size={28} strokeWidth={2.5} />
+              <div className="bg-blue-50 p-3 rounded-xl">
+                <Banknote className="text-blue-800" size={28} strokeWidth={2.5} />
               </div>
             </div>
-            <div className="text-4xl font-bold text-emerald-600 mb-2">Rs. 15,000</div>
+            <div className="text-4xl font-bold text-blue-800 mb-2">Rs. 16,500</div>
             <p className="text-sm text-gray-600 font-medium">From 6 successful requests</p>
           </div>
         </div>
