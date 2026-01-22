@@ -1,4 +1,4 @@
-import { Eye, Edit, Trash2, Filter } from 'lucide-react';
+import { Eye, Edit, Trash2, Filter, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
@@ -9,6 +9,17 @@ const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    category: '',
+    description: '',
+    urgency: '',
+    amount: '',
+    itemLostLocation: ''
+  });
 
   // Fetch user's requests from backend
   useEffect(() => {
@@ -33,6 +44,73 @@ const MyRequests = () => {
 
     fetchMyRequests();
   }, []);
+
+  // Handler for viewing request details
+  const handleViewDetails = (request) => {
+    setSelectedRequest(request);
+    setShowDetailsModal(true);
+  };
+
+  // Handler for editing request
+  const handleEditRequest = (request) => {
+    setSelectedRequest(request);
+    setEditFormData({
+      title: request.title,
+      category: request.category,
+      description: request.description,
+      urgency: request.urgency,
+      amount: request.amount || '',
+      itemLostLocation: request.itemLostLocation || ''
+    });
+    setShowEditModal(true);
+  };
+
+  // Handler for updating request
+  const handleUpdateRequest = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.put(`/requests/${selectedRequest._id}`, editFormData);
+      
+      if (response.success) {
+        // Update local state
+        setRequests(requests.map(req => 
+          req._id === selectedRequest._id ? { ...req, ...editFormData } : req
+        ));
+        setShowEditModal(false);
+        setSelectedRequest(null);
+        alert('Request updated successfully!');
+      } else {
+        alert(response.message || 'Failed to update request');
+      }
+    } catch (err) {
+      alert(err.message || 'An error occurred while updating the request');
+      console.error('Error updating request:', err);
+    }
+  };
+
+  // Handler for deleting (deactivating) request
+  const handleDeleteRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to deactivate this request?')) {
+      return;
+    }
+
+    try {
+      const response = await api.put(`/requests/${requestId}`, { status: 'Inactive' });
+      
+      if (response.success) {
+        // Update local state
+        setRequests(requests.map(req => 
+          req._id === requestId ? { ...req, status: 'Inactive' } : req
+        ));
+        alert('Request deactivated successfully!');
+      } else {
+        alert(response.message || 'Failed to deactivate request');
+      }
+    } catch (err) {
+      alert(err.message || 'An error occurred while deactivating the request');
+      console.error('Error deactivating request:', err);
+    }
+  };
 
   const filteredRequests =
     categoryFilter === 'all' ? requests : requests.filter((req) => req.category === categoryFilter);
@@ -193,18 +271,21 @@ const MyRequests = () => {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => handleViewDetails(request)}
                             className="p-2.5 text-blue-600 hover:bg-blue-100 rounded-xl transition-all shadow-sm hover:shadow-md"
                             title="View Details"
                           >
                             <Eye size={18} strokeWidth={2.5} />
                           </button>
                           <button
+                            onClick={() => handleEditRequest(request)}
                             className="p-2.5 text-emerald-600 hover:bg-emerald-100 rounded-xl transition-all shadow-sm hover:shadow-md"
                             title="Edit Request"
                           >
                             <Edit size={18} strokeWidth={2.5} />
                           </button>
                           <button
+                            onClick={() => handleDeleteRequest(request._id)}
                             className="p-2.5 text-rose-600 hover:bg-rose-100 rounded-xl transition-all shadow-sm hover:shadow-md"
                             title="Delete Request"
                           >
@@ -256,6 +337,194 @@ const MyRequests = () => {
           </p>
         </div>
       </div>
+
+      {/* View Details Modal */}
+      {showDetailsModal && selectedRequest && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-white/20 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold">Request Details</h2>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="p-2 hover:bg-blue-800 rounded-lg transition-all"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Title</label>
+                <p className="text-lg font-bold text-gray-900 mt-1">{selectedRequest.title}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Category</label>
+                  <p className="text-gray-900 mt-1">{selectedRequest.category}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Status</label>
+                  <p className="mt-1">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedRequest.status)}`}>
+                      {selectedRequest.status}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Urgency</label>
+                  <p className="mt-1">
+                    <span className={`px-4 py-2 rounded-xl text-xs font-bold shadow-sm ${getUrgencyColor(selectedRequest.urgency)}`}>
+                      {selectedRequest.urgency}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Created Date</label>
+                  <p className="text-gray-900 mt-1">{new Date(selectedRequest.createdAt).toLocaleDateString()}</p>
+                </div>
+              </div>
+              {selectedRequest.category === 'Micro-Funding' && selectedRequest.amount && (
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Target Amount</label>
+                  <p className="text-lg font-bold text-blue-600 mt-1">Rs. {selectedRequest.amount}</p>
+                </div>
+              )}
+              {selectedRequest.category === 'Lost Item' && selectedRequest.itemLostLocation && (
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Item Lost Location</label>
+                  <p className="text-gray-900 mt-1">{selectedRequest.itemLostLocation}</p>
+                </div>
+              )}
+              <div>
+                <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Description</label>
+                <p className="text-gray-900 mt-1 whitespace-pre-wrap">{selectedRequest.description}</p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Supporters</label>
+                <p className="text-gray-900 mt-1">{selectedRequest.supporters?.length || 0} supporter(s)</p>
+              </div>
+            </div>
+            <div className="p-6 bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Request Modal */}
+      {showEditModal && selectedRequest && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-white/20 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white p-6 flex justify-between items-center">
+              <h2 className="text-2xl font-bold">Edit Request</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="p-2 hover:bg-emerald-800 rounded-lg transition-all"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateRequest} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Title</label>
+                <input
+                  type="text"
+                  value={editFormData.title}
+                  onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
+                <select
+                  value={editFormData.category}
+                  onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select Category</option>
+                  <option value="Lost Item">Lost Item</option>
+                  <option value="Micro-Funding">Micro-Funding</option>
+                  <option value="Community Help">Community Help</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Urgency</label>
+                <select
+                  value={editFormData.urgency}
+                  onChange={(e) => setEditFormData({ ...editFormData, urgency: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select Urgency</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+              {editFormData.category === 'Micro-Funding' && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Amount Needed (Rs.)</label>
+                  <input
+                    type="number"
+                    value={editFormData.amount}
+                    onChange={(e) => setEditFormData({ ...editFormData, amount: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              )}
+              {editFormData.category === 'Lost Item' && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Item Lost Location</label>
+                  <input
+                    type="text"
+                    value={editFormData.itemLostLocation}
+                    onChange={(e) => setEditFormData({ ...editFormData, itemLostLocation: e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                    placeholder="e.g., Main Library, Second Floor"
+                    required
+                  />
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                  rows="6"
+                  required
+                />
+              </div>
+              <div className="flex gap-3 justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="px-6 py-2.5 border border-gray-300 rounded-lg font-semibold hover:bg-gray-100 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-emerald-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-emerald-700 transition-all"
+                >
+                  Update Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
