@@ -1,4 +1,4 @@
-import { FileText, Clock, CheckCircle, XCircle, TrendingUp, DollarSign } from 'lucide-react';
+import { FileText, Clock, CheckCircle, XCircle, TrendingUp, Banknote } from 'lucide-react';
 
 const Dashboard = () => {
   const stats = [
@@ -165,7 +165,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">Total Funds</h3>
               <div className="bg-emerald-50 p-3 rounded-xl">
-                <DollarSign className="text-emerald-600" size={28} strokeWidth={2.5} />
+                <Banknote className="text-emerald-600" size={28} strokeWidth={2.5} />
               </div>
             </div>
             <div className="text-4xl font-bold text-emerald-600 mb-2">Rs. 15,000</div>

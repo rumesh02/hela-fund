@@ -5,12 +5,12 @@ import {
   Shield, 
   Sparkles, 
   Search, 
-  DollarSign, 
   Users, 
   CheckCircle2,
   ArrowRight,
   TrendingUp,
   Clock,
+  HandHeart,
   Award
 } from 'lucide-react';
 
@@ -174,7 +174,7 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 perspective-1000">
             {[
               { icon: Search, title: "Lost & Found", color: "bg-blue-600" },
-              { icon: DollarSign, title: "Micro-Funding", color: "bg-slate-700" },
+              { icon: HandHeart, title: "Micro-Funding", color: "bg-slate-700" },
               { icon: Users, title: "Community Help", color: "bg-teal-600" }
             ].map((item, idx) => (
               <div
@@ -218,7 +218,7 @@ const Landing = () => {
                 features: ["Real-time alerts", "Campus-wide reach", "Photo verification"]
               },
               {
-                icon: DollarSign,
+                icon: HandHeart,
                 title: "Micro-Funding Support",
                 description: "Request or provide small financial help for books, meals, or emergencies. Transparent and secure.",
                 gradient: "from-slate-700/10 to-slate-700/5",
@@ -306,8 +306,8 @@ const Landing = () => {
                 <div className="absolute inset-0 bg-blue-600/5 rounded-[3rem] blur-3xl" />
                 <div className="relative grid grid-cols-2 gap-6 p-8">
                   {[
-                    { icon: Search, label: "Lost Items Found", value: "2.3K+", color: "bg-blue-600" },
-                    { icon: DollarSign, label: "Funds Raised", value: "$45K+", color: "bg-slate-700" },
+                    { icon: Search, label: "Lost Items Found", value: "1000+", color: "bg-blue-600" },
+                    { icon: HandHeart, label: "Funds Raised", value: "LKR 2M+", color: "bg-slate-700" },
                     { icon: Users, label: "Active Students", value: "12K+", color: "bg-teal-600" },
                     { icon: HeartHandshake, label: "Acts of Help", value: "8.7K+", color: "bg-emerald-600" }
                   ].map((stat, idx) => (
