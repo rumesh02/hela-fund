@@ -65,7 +65,7 @@ const requestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['draft', 'active', 'completed', 'cancelled', 'expired'],
+    enum: ['draft', 'active', 'Inactive', 'completed', 'cancelled', 'expired'],
     default: 'active'
   },
   requester: {
