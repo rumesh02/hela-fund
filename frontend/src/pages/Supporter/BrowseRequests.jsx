@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Filter, Calendar, Eye, DollarSign, MapPin, AlertCircle, Clock, Users } from 'lucide-react';
+import { Search, Filter, Calendar, Eye, HandHeart, MapPin, AlertCircle, Clock, Users } from 'lucide-react';
 import RequestDetailsModal from '../../components/Supporter/RequestDetailsModal';
 
 const BrowseRequests = () => {
@@ -177,7 +177,7 @@ const BrowseRequests = () => {
                 : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
             }`}
           >
-            <DollarSign className="inline-block mr-2" size={20} />
+            <HandHeart className="inline-block mr-2" size={20} />
             Micro Funding
           </button>
           <button

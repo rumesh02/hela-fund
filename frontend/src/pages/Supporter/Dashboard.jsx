@@ -1,4 +1,4 @@
-import { Heart, TrendingUp, CheckCircle, Clock, DollarSign } from 'lucide-react';
+import { Heart, TrendingUp, CheckCircle, Clock, Banknote } from 'lucide-react';
 
 const Dashboard = () => {
   const stats = [
@@ -165,7 +165,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">Total Impact</h3>
               <div className="bg-teal-50 p-3 rounded-xl">
-                <DollarSign className="text-teal-600" size={28} strokeWidth={2.5} />
+                <Banknote className="text-teal-600" size={28} strokeWidth={2.5} />
               </div>
             </div>
             <div className="text-4xl font-bold text-teal-600 mb-2">Rs. 42,500</div>

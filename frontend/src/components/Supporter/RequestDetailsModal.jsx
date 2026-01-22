@@ -1,4 +1,4 @@
-import { X, MapPin, Calendar, User, AlertCircle, DollarSign, Heart } from 'lucide-react';
+import { X, MapPin, Calendar, User, AlertCircle, Banknote, Heart } from 'lucide-react';
 
 const RequestDetailsModal = ({ request, onClose }) => {
   if (!request) return null;
@@ -93,7 +93,7 @@ const RequestDetailsModal = ({ request, onClose }) => {
 
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                <DollarSign size={18} />
+                <Banknote size={18} />
                 <span className="text-sm font-medium">Estimated Amount</span>
               </div>
               <p className="text-gray-800 font-medium text-lg">{request.estimatedAmount}</p>
