@@ -79,20 +79,20 @@ const Profile = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 p-6 space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800">My Profile</h1>
-        <p className="text-gray-600 mt-2">Manage your profile information and view your impact</p>
+      <div className="bg-white border-l-4 border-teal-600 rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+        <p className="text-gray-600 mt-1">Manage your profile information and view your impact</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Profile Card & Stats */}
         <div className="space-y-6">
           {/* Profile Card */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="text-center">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-4xl mx-auto mb-4">
+              <div className="w-24 h-24 bg-gradient-to-br from-teal-600 to-teal-700 rounded-full flex items-center justify-center text-white text-4xl mx-auto mb-4">
                 {formData.firstName[0]}{formData.lastName[0]}
               </div>
               <h2 className="text-2xl font-bold text-gray-800">
@@ -115,7 +115,7 @@ const Profile = () => {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="mt-4 w-full flex items-center justify-center space-x-2 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  className="mt-4 w-full flex items-center justify-center space-x-2 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
                 >
                   <Edit2 size={16} />
                   <span>Edit Profile</span>
@@ -125,7 +125,7 @@ const Profile = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Stats</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -167,7 +167,7 @@ const Profile = () => {
                   </button>
                   <button
                     onClick={handleSave}
-                    className="flex items-center space-x-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className="flex items-center space-x-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
                   >
                     <Save size={16} />
                     <span>Save</span>

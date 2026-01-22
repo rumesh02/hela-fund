@@ -80,7 +80,7 @@ const Dashboard = () => {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="bg-white rounded-2xl shadow-lg border ${stat.borderColor} p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
+            className="bg-white rounded-2xl shadow-lg ${stat.borderColor} p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center justify-between">
               <div>

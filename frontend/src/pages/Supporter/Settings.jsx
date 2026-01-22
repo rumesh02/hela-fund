@@ -34,20 +34,20 @@ const Settings = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 p-6 space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800">Settings</h1>
-        <p className="text-gray-600 mt-2">Manage your account preferences and settings</p>
+      <div className="bg-white border-l-4 border-teal-600 rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <p className="text-gray-600 mt-1">Manage your account preferences and settings</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Settings */}
         <div className="lg:col-span-2 space-y-6">
           {/* Notification Settings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <Bell className="text-blue-600" size={24} />
+              <Bell className="text-teal-600" size={24} />
               <h2 className="text-xl font-bold text-gray-800">Notification Settings</h2>
             </div>
             <p className="text-sm text-gray-600 mb-6">
@@ -63,7 +63,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('emailNotifications')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.emailNotifications ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.emailNotifications ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -82,7 +82,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('pushNotifications')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.pushNotifications ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.pushNotifications ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -101,7 +101,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('newRequestAlerts')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.newRequestAlerts ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.newRequestAlerts ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -120,7 +120,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('messageNotifications')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.messageNotifications ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.messageNotifications ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -139,7 +139,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('contributionUpdates')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.contributionUpdates ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.contributionUpdates ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -158,7 +158,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('weeklyDigest')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.weeklyDigest ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.weeklyDigest ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -172,9 +172,9 @@ const Settings = () => {
           </div>
 
           {/* Privacy Settings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <Shield className="text-green-600" size={24} />
+              <Shield className="text-teal-600" size={24} />
               <h2 className="text-xl font-bold text-gray-800">Privacy Settings</h2>
             </div>
             <p className="text-sm text-gray-600 mb-6">
@@ -192,7 +192,7 @@ const Settings = () => {
                 <select
                   value={settings.profileVisibility}
                   onChange={(e) => handleSelect('profileVisibility', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option value="public">Public - Everyone</option>
                   <option value="verified">Verified Users Only</option>
@@ -208,7 +208,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('showEmail')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.showEmail ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.showEmail ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -227,7 +227,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('showPhone')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.showPhone ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.showPhone ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -246,7 +246,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('allowMessages')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.allowMessages ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.allowMessages ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -260,9 +260,9 @@ const Settings = () => {
           </div>
 
           {/* Appearance Settings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <Moon className="text-indigo-600" size={24} />
+              <Moon className="text-teal-600" size={24} />
               <h2 className="text-xl font-bold text-gray-800">Appearance</h2>
             </div>
             <p className="text-sm text-gray-600 mb-6">
@@ -282,7 +282,7 @@ const Settings = () => {
                     onClick={() => handleSelect('theme', 'light')}
                     className={`px-4 py-3 border-2 rounded-lg transition ${
                       settings.theme === 'light'
-                        ? 'border-blue-600 bg-blue-50'
+                        ? 'border-teal-600 bg-teal-50'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
@@ -295,7 +295,7 @@ const Settings = () => {
                     onClick={() => handleSelect('theme', 'dark')}
                     className={`px-4 py-3 border-2 rounded-lg transition ${
                       settings.theme === 'dark'
-                        ? 'border-blue-600 bg-blue-50'
+                        ? 'border-teal-600 bg-teal-50'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
@@ -308,7 +308,7 @@ const Settings = () => {
                     onClick={() => handleSelect('theme', 'auto')}
                     className={`px-4 py-3 border-2 rounded-lg transition ${
                       settings.theme === 'auto'
-                        ? 'border-blue-600 bg-blue-50'
+                        ? 'border-teal-600 bg-teal-50'
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                   >
@@ -330,7 +330,7 @@ const Settings = () => {
                 <select
                   value={settings.language}
                   onChange={(e) => handleSelect('language', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option value="en">English</option>
                   <option value="si">Sinhala (සිංහල)</option>
@@ -344,9 +344,9 @@ const Settings = () => {
         {/* Security & Actions Sidebar */}
         <div className="space-y-6">
           {/* Security Settings */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
             <div className="flex items-center space-x-2 mb-4">
-              <Lock className="text-red-600" size={24} />
+              <Lock className="text-teal-600" size={24} />
               <h2 className="text-lg font-bold text-gray-800">Security</h2>
             </div>
 
@@ -359,7 +359,7 @@ const Settings = () => {
                 <button
                   onClick={() => handleToggle('twoFactorAuth')}
                   className={`relative w-12 h-6 rounded-full transition ${
-                    settings.twoFactorAuth ? 'bg-blue-600' : 'bg-gray-300'
+                    settings.twoFactorAuth ? 'bg-teal-600' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -381,9 +381,9 @@ const Settings = () => {
           </div>
 
           {/* Quick Info */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="font-bold text-blue-800 mb-3">💡 Tips</h3>
-            <ul className="space-y-2 text-sm text-blue-700">
+          <div className="bg-teal-50 border border-teal-200 rounded-2xl p-6">
+            <h3 className="font-bold text-teal-800 mb-3">💡 Tips</h3>
+            <ul className="space-y-2 text-sm text-teal-700">
               <li>• Keep notifications on to stay updated</li>
               <li>• Enable 2FA for better security</li>
               <li>• Make your profile public to gain trust</li>
@@ -391,7 +391,7 @@ const Settings = () => {
           </div>
 
           {/* Danger Zone */}
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-6">
             <h3 className="font-bold text-red-800 mb-3">⚠️ Danger Zone</h3>
             <div className="space-y-2">
               <button className="w-full py-2 px-4 bg-white border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition text-sm font-medium">
@@ -407,7 +407,7 @@ const Settings = () => {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">
+        <button className="px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium shadow-lg">
           Save All Settings
         </button>
       </div>

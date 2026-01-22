@@ -8,13 +8,16 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -32,62 +35,77 @@ const Sidebar = () => {
     { path: '/supporter/settings', icon: Settings, label: 'Settings' },
   ];
 
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <>
-      {/* Mobile Menu Toggle */}
+      {/* Mobile Menu Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 bg-blue-600 text-white rounded-lg shadow-lg"
+        onClick={toggleSidebar}
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-teal-600 text-white rounded-lg shadow-lg hover:bg-teal-700 transition-all"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Overlay */}
+      {/* Overlay for mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={() => setIsOpen(false)}
-        ></div>
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30"
+          onClick={toggleSidebar}
+        />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } md:translate-x-0`}
+        className={`fixed lg:static inset-y-0 left-0 z-40 bg-white shadow-xl transform transition-all duration-300 ease-in-out border-r border-gray-200 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'} w-64`}
       >
         <div className="flex flex-col h-full">
-          {/* Logo Section */}
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <Heart className="text-white" size={20} />
+          {/* Logo/Brand */}
+          <div className="p-5 border-b border-gray-200 bg-white relative">
+            <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+              <div className="bg-gradient-to-br from-teal-600 to-teal-700 p-2 rounded-lg shadow-md">
+                <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-8 h-8" />
               </div>
-              <div>
-                <h2 className="font-bold text-gray-800">Supporter</h2>
-                <p className="text-xs text-gray-500">Make a difference</p>
-              </div>
+              {!isCollapsed && (
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Hela Fund</h1>
+                  <p className="text-xs text-teal-600 font-medium">Supporter Portal</p>
+                </div>
+              )}
             </div>
+            
+            {/* Collapse Button - Desktop Only */}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden lg:flex absolute -right-3 top-6 bg-teal-600 text-white p-1.5 rounded-full shadow-lg hover:bg-teal-700 transition-colors"
+            >
+              {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex-1 overflow-y-auto py-4">
-            <ul className="space-y-1 px-3">
+          <nav className="flex-1 p-4 overflow-y-auto">
+            <ul className="space-y-2">
               {menuItems.map((item) => (
                 <li key={item.path}>
                   <NavLink
                     to={item.path}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                      `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                         isActive
-                          ? 'bg-blue-50 text-blue-600 font-medium'
-                          : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600'
-                      }`
+                          ? 'bg-teal-600 text-white font-semibold shadow-md'
+                          : 'text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium'
+                      } ${isCollapsed ? 'justify-center' : ''}`
                     }
+                    title={isCollapsed ? item.label : ''}
                   >
-                    <item.icon size={20} />
-                    <span>{item.label}</span>
+                    <item.icon size={20} strokeWidth={2.5} />
+                    {!isCollapsed && <span>{item.label}</span>}
                   </NavLink>
                 </li>
               ))}
@@ -98,10 +116,11 @@ const Sidebar = () => {
           <div className="p-4 border-t border-gray-200">
             <button 
               onClick={handleLogout}
-              className="flex items-center space-x-3 w-full px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+              className={`flex items-center gap-3 px-4 py-3 w-full rounded-xl text-rose-600 hover:bg-rose-50 transition-all duration-200 font-semibold ${isCollapsed ? 'justify-center' : ''}`}
+              title={isCollapsed ? 'Logout' : ''}
             >
-              <LogOut size={20} />
-              <span>Logout</span>
+              <LogOut size={20} strokeWidth={2.5} />
+              {!isCollapsed && <span>Logout</span>}
             </button>
           </div>
         </div>
