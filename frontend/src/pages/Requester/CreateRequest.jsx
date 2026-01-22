@@ -175,7 +175,7 @@ const CreateRequest = () => {
               value={formData.title}
               onChange={handleChange}
               required
-              placeholder="e.g., Lost Student ID Card"
+              placeholder="Enter request title"
               className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
             />
           </div>

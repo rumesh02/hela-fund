@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Filter, Calendar, Eye, HandHeart, MapPin, AlertCircle, Clock, Users } from 'lucide-react';
 import RequestDetailsModal from '../../components/Supporter/RequestDetailsModal';
+import api from '../../utils/api';
 
 const BrowseRequests = () => {
   const [activeCategory, setActiveCategory] = useState('Micro-Funding');
@@ -8,8 +9,31 @@ const BrowseRequests = () => {
   const [dateFilter, setDateFilter] = useState('all');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sample data - replace with API calls later
+  // Fetch requests from API
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.get(`/requests?category=${activeCategory}&limit=100`);
+        setRequests(response.data || []);
+      } catch (err) {
+        console.error('Error fetching requests:', err);
+        setError(err.message || 'Failed to fetch requests');
+        setRequests([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, [activeCategory]);
+
+  // Sample data - backup/fallback (can be removed later)
   const microFundingRequests = [
     {
       id: 1,
@@ -118,21 +142,8 @@ const BrowseRequests = () => {
     return colors[urgency] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
-  const getCurrentRequests = () => {
-    switch (activeCategory) {
-      case 'Micro-Funding':
-        return microFundingRequests;
-      case 'Lost Item':
-        return lostItemRequests;
-      case 'Community Help':
-        return communityHelpRequests;
-      default:
-        return [];
-    }
-  };
-
-  const filterRequests = (requests) => {
-    return requests.filter((request) => {
+  const filterRequests = (requestsToFilter) => {
+    return requestsToFilter.filter((request) => {
       const urgencyMatch = selectedUrgency === 'all' || request.urgency === selectedUrgency;
       
       let dateMatch = true;
@@ -156,7 +167,7 @@ const BrowseRequests = () => {
     setIsModalOpen(true);
   };
 
-  const filteredRequests = filterRequests(getCurrentRequests());
+  const filteredRequests = filterRequests(requests);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 p-6 space-y-6">
@@ -171,10 +182,10 @@ const BrowseRequests = () => {
         <div className="grid grid-cols-3 gap-2">
           <button
             onClick={() => setActiveCategory('Micro-Funding')}
-            className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+            className={`py-8 px-6 rounded-xl font-medium transition-all duration-200 ${
               activeCategory === 'Micro-Funding'
                 ? 'bg-teal-600 text-white shadow-md'
-                : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
+                : 'bg-gray-200 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
             }`}
           >
             <HandHeart className="inline-block mr-2" size={20} />
@@ -182,10 +193,10 @@ const BrowseRequests = () => {
           </button>
           <button
             onClick={() => setActiveCategory('Lost Item')}
-            className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+            className={`py-8 px-6 rounded-xl font-medium transition-all duration-200 ${
               activeCategory === 'Lost Item'
                 ? 'bg-teal-600 text-white shadow-md'
-                : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
+                : 'bg-gray-200 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
             }`}
           >
             <MapPin className="inline-block mr-2" size={20} />
@@ -193,10 +204,10 @@ const BrowseRequests = () => {
           </button>
           <button
             onClick={() => setActiveCategory('Community Help')}
-            className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+            className={`py-8 px-6 rounded-xl font-medium transition-all duration-200 ${
               activeCategory === 'Community Help'
                 ? 'bg-teal-600 text-white shadow-md'
-                : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
+                : 'bg-gray-200 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
             }`}
           >
             <Users className="inline-block mr-2" size={20} />
@@ -254,12 +265,29 @@ const BrowseRequests = () => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading requests...</p>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <div className="bg-red-50 rounded-lg border border-red-200 p-6 text-center">
+          <div className="text-4xl mb-2">⚠️</div>
+          <h3 className="text-lg font-bold text-red-800 mb-2">Error Loading Requests</h3>
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+
       {/* Requests Grid - Category Specific Views */}
-      {activeCategory === 'Micro-Funding' && (
+      {!loading && !error && activeCategory === 'Micro-Funding' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRequests.map((request) => (
             <div
-              key={request.id}
+              key={request._id}
               className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="p-6">
@@ -309,11 +337,11 @@ const BrowseRequests = () => {
                 <div className="mb-4 pb-4 border-b border-gray-200">
                   <p className="text-sm text-gray-700">
                     <span className="font-medium">Requester:</span>{' '}
-                    {request.anonymous ? 'Anonymous' : request.requester}
+                    {request.anonymous ? 'Anonymous' : (request.requester?.name || 'Unknown')}
                   </p>
                   <p className="text-xs text-gray-500 mt-1 flex items-center">
                     <Users size={14} className="mr-1" />
-                    {request.contributionsCount} supporter{request.contributionsCount !== 1 && 's'}
+                    {request.contributionsCount || 0} supporter{(request.contributionsCount || 0) !== 1 && 's'}
                   </p>
                 </div>
 
@@ -332,11 +360,11 @@ const BrowseRequests = () => {
       )}
 
       {/* Lost Items View */}
-      {activeCategory === 'Lost Item' && (
+      {!loading && !error && activeCategory === 'Lost Item' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRequests.map((request) => (
             <div
-              key={request.id}
+              key={request._id}
               className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="p-6">
@@ -376,11 +404,11 @@ const BrowseRequests = () => {
                 <div className="mb-4 pb-4 border-b border-gray-200">
                   <p className="text-sm text-gray-700">
                     <span className="font-medium">Posted by:</span>{' '}
-                    {request.anonymous ? 'Anonymous' : request.requester}
+                    {request.anonymous ? 'Anonymous' : (request.requester?.name || 'Unknown')}
                   </p>
                   <p className="text-xs text-gray-500 mt-1 flex items-center">
                     <Eye size={14} className="mr-1" />
-                    {request.views} view{request.views !== 1 && 's'}
+                    {request.views || 0} view{(request.views || 0) !== 1 && 's'}
                   </p>
                 </div>
 
@@ -399,11 +427,11 @@ const BrowseRequests = () => {
       )}
 
       {/* Community Help View */}
-      {activeCategory === 'Community Help' && (
+      {!loading && !error && activeCategory === 'Community Help' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredRequests.map((request) => (
             <div
-              key={request.id}
+              key={request._id}
               className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="p-6">
@@ -432,16 +460,16 @@ const BrowseRequests = () => {
                 <div className="mb-4 pb-4 border-b border-gray-200">
                   <p className="text-sm text-gray-700">
                     <span className="font-medium">Posted by:</span>{' '}
-                    {request.anonymous ? 'Anonymous' : request.requester}
+                    {request.anonymous ? 'Anonymous' : (request.requester?.name || 'Unknown')}
                   </p>
                   <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                     <span className="flex items-center">
                       <Users size={14} className="mr-1" />
-                      {request.supporters || 0} helper{request.supporters !== 1 && 's'}
+                      {request.supporters?.length || 0} helper{(request.supporters?.length || 0) !== 1 && 's'}
                     </span>
                     <span className="flex items-center">
                       <Eye size={14} className="mr-1" />
-                      {request.views} view{request.views !== 1 && 's'}
+                      {request.views || 0} view{(request.views || 0) !== 1 && 's'}
                     </span>
                   </div>
                 </div>
@@ -461,11 +489,11 @@ const BrowseRequests = () => {
       )}
 
       {/* No Results */}
-      {filteredRequests.length === 0 && (
+      {!loading && !error && filteredRequests.length === 0 && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">No requests found</h3>
-          <p className="text-gray-600">Try adjusting your filters or search query</p>
+          <p className="text-gray-600">Try adjusting your filters or check back later</p>
         </div>
       )}
 
