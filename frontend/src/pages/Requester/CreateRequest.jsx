@@ -28,19 +28,22 @@ const CreateRequest = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Create New Request</h1>
-        <p className="text-gray-600 mt-1">Fill in the details below to submit your help request.</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Page Header */}
+        <div className="bg-white border-l-4 border-blue-600 rounded-xl shadow-md p-6">
+          <h1 className="text-2xl font-bold text-gray-900">Create New Request</h1>
+          <p className="text-gray-600 mt-1">Fill in the details below to submit your help request.</p>
+        </div>
 
       {/* Info Alert */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-        <AlertCircle className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+      <div className="bg-gradient-to-r from-blue-50 to-blue-100 border-2 border-blue-200 rounded-2xl p-6 flex items-start gap-4 shadow-lg">
+        <div className="bg-blue-600 p-3 rounded-xl">
+          <AlertCircle className="text-white flex-shrink-0" size={24} strokeWidth={2.5} />
+        </div>
         <div className="text-sm text-blue-900">
-          <p className="font-medium">Tips for a successful request:</p>
-          <ul className="list-disc list-inside mt-2 space-y-1 text-blue-800">
+          <p className="font-bold text-lg mb-2">Tips for a successful request:</p>
+          <ul className="list-disc list-inside mt-2 space-y-2 text-blue-800 font-medium">
             <li>Be clear and specific about what you need</li>
             <li>Provide as much detail as possible</li>
             <li>Upload relevant proof or documentation</li>
@@ -49,7 +52,7 @@ const CreateRequest = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+      <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl border border-gray-100 p-10">
         <div className="space-y-6">
           {/* Title */}
           <div>
@@ -64,7 +67,7 @@ const CreateRequest = () => {
               onChange={handleChange}
               required
               placeholder="e.g., Lost Student ID Card"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
             />
           </div>
 
@@ -81,7 +84,7 @@ const CreateRequest = () => {
               required
               rows="5"
               placeholder="Provide detailed information about your request..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all hover:border-gray-300"
             />
           </div>
 
@@ -98,7 +101,7 @@ const CreateRequest = () => {
                 value={formData.category}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
               >
                 <option value="">Select a category</option>
                 <option value="Lost Item">Lost Item</option>
@@ -118,7 +121,7 @@ const CreateRequest = () => {
                 value={formData.urgency}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
               >
                 <option value="">Select urgency level</option>
                 <option value="Low">Low</option>
@@ -140,7 +143,7 @@ const CreateRequest = () => {
               value={formData.location}
               onChange={handleChange}
               placeholder="e.g., Main Library, Faculty of Science"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-gray-300"
             />
           </div>
 
@@ -149,13 +152,15 @@ const CreateRequest = () => {
             <label htmlFor="proof" className="block text-sm font-medium text-gray-700 mb-2">
               Upload Proof/Documentation
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-indigo-400 transition-colors">
-              <Upload className="mx-auto text-gray-400 mb-2" size={32} />
+            <div className="border-2 border-dashed border-blue-300 rounded-2xl p-8 text-center hover:border-blue-500 transition-all bg-gradient-to-br from-blue-50 to-white hover:shadow-lg">
+              <div className="bg-blue-100 p-4 rounded-xl inline-block mb-3">
+                <Upload className="mx-auto text-blue-600" size={36} strokeWidth={2.5} />
+              </div>
               <label htmlFor="proof" className="cursor-pointer">
-                <span className="text-indigo-600 font-medium hover:text-indigo-700">
+                <span className="text-blue-600 font-bold hover:text-blue-700 text-lg">
                   Click to upload
                 </span>
-                <span className="text-gray-600"> or drag and drop</span>
+                <span className="text-gray-600 font-medium"> or drag and drop</span>
                 <input
                   type="file"
                   id="proof"
@@ -165,35 +170,37 @@ const CreateRequest = () => {
                   accept="image/*,.pdf,.doc,.docx"
                 />
               </label>
-              <p className="text-xs text-gray-500 mt-2">PNG, JPG, PDF up to 10MB</p>
+              <p className="text-xs text-gray-500 mt-3 font-medium">PNG, JPG, PDF up to 10MB</p>
               {formData.proof && (
-                <p className="text-sm text-green-600 mt-2 font-medium">
-                  Selected: {formData.proof.name}
-                </p>
+                <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <p className="text-sm text-emerald-700 font-semibold">
+                    ✓ Selected: {formData.proof.name}
+                  </p>
+                </div>
               )}
             </div>
           </div>
 
           {/* Anonymous Checkbox */}
-          <div className="flex items-center">
+          <div className="flex items-center bg-gray-50 p-4 rounded-xl border border-gray-200">
             <input
               type="checkbox"
               id="anonymous"
               name="anonymous"
               checked={formData.anonymous}
               onChange={handleChange}
-              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label htmlFor="anonymous" className="ml-2 text-sm text-gray-700">
+            <label htmlFor="anonymous" className="ml-3 text-sm text-gray-900 font-medium">
               Submit this request anonymously
             </label>
           </div>
 
           {/* Submit Buttons */}
-          <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
+          <div className="flex items-center gap-4 pt-6 border-t-2 border-gray-200">
             <button
               type="submit"
-              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+              className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all shadow-lg hover:shadow-xl"
             >
               Submit Request
             </button>
@@ -208,13 +215,14 @@ const CreateRequest = () => {
                 proof: null,
                 anonymous: false,
               })}
-              className="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              className="px-8 py-4 border-2 border-gray-300 rounded-xl font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all shadow-sm hover:shadow-md"
             >
               Clear Form
             </button>
           </div>
         </div>
       </form>
+      </div>
     </div>
   );
 };

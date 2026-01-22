@@ -30,10 +30,10 @@ const Profile = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+      <div className="bg-white border-l-4 border-blue-600 rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
         <p className="text-gray-600 mt-1">View and manage your profile information.</p>
       </div>
 
@@ -41,63 +41,76 @@ const Profile = () => {
         {/* Left Column - Profile Info */}
         <div className="lg:col-span-2 space-y-6">
           {/* Basic Info Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center text-white text-3xl font-bold shadow-xl ring-4 ring-blue-100">
                   {studentInfo.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900">{studentInfo.name}</h2>
-                  <p className="text-gray-600">{studentInfo.studentId}</p>
+                  <p className="text-blue-600 font-semibold">{studentInfo.studentId}</p>
                 </div>
               </div>
-              <button className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                <Edit size={18} />
+              <button className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg font-semibold">
+                <Edit size={18} strokeWidth={2.5} />
                 <span>Edit Profile</span>
               </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Mail className="text-indigo-600" size={20} />
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm">
+                <div className="bg-blue-100 p-3 rounded-xl">
+                  <Mail className="text-blue-600" size={22} strokeWidth={2.5} />
+                </div>
                 <div>
-                  <p className="text-xs text-gray-500">Email</p>
-                  <p className="text-sm font-medium text-gray-900">{studentInfo.email}</p>
+                  <p className="text-xs text-gray-600 font-semibold uppercase">Email</p>
+                  <p className="text-sm font-bold text-gray-900">{studentInfo.email}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Phone className="text-indigo-600" size={20} />
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm">
+                <div className="bg-blue-100 p-3 rounded-xl">
+                  <Phone className="text-blue-600" size={22} strokeWidth={2.5} />
+                </div>
                 <div>
-                  <p className="text-xs text-gray-500">Phone</p>
-                  <p className="text-sm font-medium text-gray-900">{studentInfo.phone}</p>
+                  <p className="text-xs text-gray-600 font-semibold uppercase">Phone</p>
+                  <p className="text-sm font-bold text-gray-900">{studentInfo.phone}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <MapPin className="text-indigo-600" size={20} />
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm">
+                <div className="bg-blue-100 p-3 rounded-xl">
+                  <MapPin className="text-blue-600" size={22} strokeWidth={2.5} />
+                </div>
                 <div>
-                  <p className="text-xs text-gray-500">Location</p>
-                  <p className="text-sm font-medium text-gray-900">{studentInfo.location}</p>
+                  <p className="text-xs text-gray-600 font-semibold uppercase">Location</p>
+                  <p className="text-sm font-bold text-gray-900">{studentInfo.location}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Calendar className="text-indigo-600" size={20} />
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm">
+                <div className="bg-blue-100 p-3 rounded-xl">
+                  <Calendar className="text-blue-600" size={22} strokeWidth={2.5} />
+                </div>
                 <div>
-                  <p className="text-xs text-gray-500">Joined</p>
-                  <p className="text-sm font-medium text-gray-900">{studentInfo.joinedDate}</p>
+                  <p className="text-xs text-gray-600 font-semibold uppercase">Joined</p>
+                  <p className="text-sm font-bold text-gray-900">{studentInfo.joinedDate}</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Academic Info Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Academic Information</h3>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <div className="bg-blue-100 p-2 rounded-xl">
+                <Award className="text-blue-600" size={20} />
+              </div>
+              Academic Information
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-5 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-100 shadow-sm">
                 <p className="text-sm text-gray-600 mb-1">Faculty</p>
                 <p className="text-lg font-semibold text-gray-900">{studentInfo.faculty}</p>
               </div>
@@ -111,28 +124,30 @@ const Profile = () => {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((stat, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
-                <div className="text-3xl mb-2">{stat.icon}</div>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-                <p className="text-xs text-gray-600 mt-1">{stat.label}</p>
+              <div key={index} className="bg-white rounded-2xl shadow-lg border border-blue-100 p-6 text-center hover:shadow-xl transition-all">
+                <div className="text-4xl mb-3">{stat.icon}</div>
+                <p className="text-3xl font-bold text-blue-600">{stat.value}</p>
+                <p className="text-xs text-gray-600 mt-2 font-semibold uppercase">{stat.label}</p>
               </div>
             ))}
           </div>
 
           {/* Badges Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Award className="text-indigo-600" size={24} />
-              <h3 className="text-lg font-semibold text-gray-900">Badges & Achievements</h3>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="bg-blue-100 p-3 rounded-xl">
+                <Award className="text-blue-600" size={24} strokeWidth={2.5} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Badges & Achievements</h3>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {badges.map((badge, index) => (
                 <div
                   key={index}
-                  className={`p-4 rounded-lg text-center transition-all ${
+                  className={`p-5 rounded-2xl text-center transition-all shadow-lg hover:shadow-xl ${
                     badge.earned
-                      ? badge.color
-                      : 'bg-gray-100 text-gray-400 opacity-50'
+                      ? badge.color + ' border-2'
+                      : 'bg-gray-100 text-gray-400 opacity-60'
                   }`}
                 >
                   <div className="text-3xl mb-2">{badge.icon}</div>
@@ -149,61 +164,61 @@ const Profile = () => {
         {/* Right Column - Trust Score & Quick Actions */}
         <div className="space-y-6">
           {/* Trust Score Card */}
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-sm p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Trust Score</h3>
-              <TrendingUp size={24} />
+          <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl shadow-2xl p-8 text-white">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold">Trust Score</h3>
+              <TrendingUp size={28} strokeWidth={2.5} />
             </div>
-            <div className="text-center mb-6">
-              <div className="text-6xl font-bold mb-2">{trustScore}</div>
-              <p className="text-indigo-100">Out of 100</p>
+            <div className="text-center mb-8">
+              <div className="text-7xl font-bold mb-3">{trustScore}</div>
+              <p className="text-blue-100 text-lg font-semibold">Out of 100</p>
             </div>
-            <div className="bg-white bg-opacity-20 rounded-full h-3 mb-4">
+            <div className="bg-white bg-opacity-20 rounded-full h-4 mb-4">
               <div
-                className="bg-white rounded-full h-3 transition-all duration-500"
+                className="bg-white rounded-full h-4 transition-all duration-500 shadow-lg"
                 style={{ width: `${trustScore}%` }}
               ></div>
             </div>
-            <p className="text-sm text-indigo-100 text-center">
+            <p className="text-sm text-blue-100 text-center font-medium">
               Excellent! Your trust score is very high.
             </p>
           </div>
 
           {/* Activity Summary */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity Summary</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-                <span className="text-sm text-gray-600">Requests This Month</span>
-                <span className="text-lg font-bold text-gray-900">8</span>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Activity Summary</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-4 border-b-2 border-gray-100">
+                <span className="text-sm text-gray-700 font-semibold">Requests This Month</span>
+                <span className="text-2xl font-bold text-blue-600">8</span>
               </div>
-              <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-                <span className="text-sm text-gray-600">Active Conversations</span>
-                <span className="text-lg font-bold text-gray-900">4</span>
+              <div className="flex items-center justify-between pb-4 border-b-2 border-gray-100">
+                <span className="text-sm text-gray-700 font-semibold">Active Conversations</span>
+                <span className="text-2xl font-bold text-blue-600">4</span>
               </div>
-              <div className="flex items-center justify-between pb-3 border-b border-gray-200">
-                <span className="text-sm text-gray-600">Avg. Response Time</span>
-                <span className="text-lg font-bold text-gray-900">2.5h</span>
+              <div className="flex items-center justify-between pb-4 border-b-2 border-gray-100">
+                <span className="text-sm text-gray-700 font-semibold">Avg. Response Time</span>
+                <span className="text-2xl font-bold text-blue-600">2.5h</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Member Since</span>
-                <span className="text-lg font-bold text-gray-900">{studentInfo.joinedDate}</span>
+                <span className="text-sm text-gray-700 font-semibold">Member Since</span>
+                <span className="text-2xl font-bold text-blue-600">{studentInfo.joinedDate}</span>
               </div>
             </div>
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <button className="w-full px-4 py-3 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition-colors text-left font-medium">
-                Create New Request
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+            <div className="space-y-3">
+              <button className="w-full px-5 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl text-left font-bold">
+                📝 Create New Request
               </button>
-              <button className="w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-left font-medium">
-                View My Requests
+              <button className="w-full px-5 py-4 bg-gradient-to-r from-gray-50 to-blue-50 text-gray-800 rounded-xl hover:from-blue-50 hover:to-blue-100 transition-all border border-gray-200 hover:border-blue-200 text-left font-bold">
+                📜 View My Requests
               </button>
-              <button className="w-full px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors text-left font-medium">
-                Check Messages
+              <button className="w-full px-5 py-4 bg-gradient-to-r from-gray-50 to-blue-50 text-gray-800 rounded-xl hover:from-blue-50 hover:to-blue-100 transition-all border border-gray-200 hover:border-blue-200 text-left font-bold">
+                💬 Check Messages
               </button>
             </div>
           </div>

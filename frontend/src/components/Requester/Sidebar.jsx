@@ -8,12 +8,15 @@ import {
   Settings, 
   LogOut,
   Menu,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useState } from 'react';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
     { path: '/requester/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -33,7 +36,7 @@ const Sidebar = () => {
       {/* Mobile Menu Button */}
       <button
         onClick={toggleSidebar}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-indigo-600 text-white rounded-lg shadow-lg hover:bg-indigo-700 transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 p-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-all"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -48,15 +51,32 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+        className={`fixed lg:static inset-y-0 left-0 z-40 bg-white shadow-xl transform transition-all duration-300 ease-in-out border-r border-gray-200 ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'} w-64`}
       >
         <div className="flex flex-col h-full">
           {/* Logo/Brand */}
-          <div className="p-6 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-indigo-600">Hela Fund</h1>
-            <p className="text-sm text-gray-500 mt-1">Requester Portal</p>
+          <div className="p-5 border-b border-gray-200 bg-white relative">
+            <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+              <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-2 rounded-lg shadow-md">
+                <img src="/images/logoCircle.png" alt="Hela Fund Logo" className="w-8 h-8" />
+              </div>
+              {!isCollapsed && (
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Hela Fund</h1>
+                  <p className="text-xs text-blue-600 font-medium">Requester Portal</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Collapse Button - Desktop Only */}
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="hidden lg:flex absolute -right-3 top-6 bg-blue-600 text-white p-1.5 rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+            >
+              {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </button>
           </div>
 
           {/* Navigation Menu */}
@@ -68,15 +88,16 @@ const Sidebar = () => {
                     to={item.path}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                      `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                         isActive
-                          ? 'bg-indigo-50 text-indigo-600 font-medium shadow-sm'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                      }`
+                          ? 'bg-blue-600 text-white font-semibold shadow-md'
+                          : 'text-gray-700 hover:bg-blue-50 hover:text-blue-700 font-medium'
+                      } ${isCollapsed ? 'justify-center' : ''}`
                     }
+                    title={isCollapsed ? item.label : ''}
                   >
-                    <item.icon size={20} />
-                    <span>{item.label}</span>
+                    <item.icon size={20} strokeWidth={2.5} />
+                    {!isCollapsed && <span>{item.label}</span>}
                   </NavLink>
                 </li>
               ))}
@@ -85,9 +106,11 @@ const Sidebar = () => {
 
           {/* Logout Button */}
           <div className="p-4 border-t border-gray-200">
-            <button className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200">
-              <LogOut size={20} />
-              <span>Logout</span>
+            <button className={`flex items-center gap-3 px-4 py-3 w-full rounded-xl text-rose-600 hover:bg-rose-50 transition-all duration-200 font-semibold ${isCollapsed ? 'justify-center' : ''}`}
+              title={isCollapsed ? 'Logout' : ''}
+            >
+              <LogOut size={20} strokeWidth={2.5} />
+              {!isCollapsed && <span>Logout</span>}
             </button>
           </div>
         </div>
