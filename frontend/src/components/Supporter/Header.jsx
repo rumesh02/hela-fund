@@ -1,6 +1,20 @@
 import { Bell, User, LogOut } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
+  const { user } = useAuth();
+
+  // Get user's initials for avatar
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const names = name.trim().split(' ');
+    if (names.length === 1) return names[0].charAt(0).toUpperCase();
+    return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+  };
+
+  const displayName = user?.name || user?.fullName || 'User';
+  const initials = getInitials(displayName);
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
       <div className="flex items-center justify-between px-6 py-4">
@@ -23,11 +37,11 @@ const Header = () => {
           {/* User Info */}
           <div className="flex items-center space-x-3">
             <div className="hidden md:block text-right">
-              <p className="text-sm font-medium text-gray-700">Amantha Sandeepa</p>
+              <p className="text-sm font-medium text-gray-700">{displayName}</p>
               <p className="text-xs text-gray-500">Trust Score: 4.8/5</p>
             </div>
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <User size={20} className="text-blue-600" />
+              <span className="text-sm font-semibold text-blue-600">{initials}</span>
             </div>
           </div>
 
