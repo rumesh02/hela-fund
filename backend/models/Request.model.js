@@ -15,12 +15,30 @@ const requestSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Please add a category'],
-    enum: ['medical', 'education', 'emergency', 'business', 'housing', 'food', 'other']
+    enum: ['Lost Item', 'Micro-Funding', 'Community Help']
   },
-  targetAmount: {
+  urgency: {
+    type: String,
+    required: [true, 'Please add urgency level'],
+    enum: ['Low', 'Medium', 'High'],
+    default: 'Medium'
+  },
+  // Conditional field: only for Lost Item category
+  itemLostLocation: {
+    type: String,
+    trim: true,
+    maxlength: 500,
+    required: function() {
+      return this.category === 'Lost Item';
+    }
+  },
+  // Conditional field: only for Micro-Funding category
+  amount: {
     type: Number,
-    required: [true, 'Please add a target amount'],
-    min: 0
+    min: 0,
+    required: function() {
+      return this.category === 'Micro-Funding';
+    }
   },
   currentAmount: {
     type: Number,
@@ -29,12 +47,21 @@ const requestSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    default: 'USD',
-    enum: ['USD', 'EUR', 'GBP', 'INR', 'NGN']
+    default: 'Rupees',
+    enum: ['Rupees', 'USD', 'EUR', 'GBP', 'INR', 'NGN']
   },
-  deadline: {
-    type: Date,
-    required: [true, 'Please add a deadline']
+  // Proof document (placeholder for now)
+  proofDocument: {
+    name: String,
+    url: String,
+    uploadedAt: {
+      type: Date,
+      default: Date.now
+    }
+  },
+  anonymous: {
+    type: Boolean,
+    default: false
   },
   status: {
     type: String,
@@ -45,26 +72,6 @@ const requestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  },
-  images: [{
-    type: String
-  }],
-  documents: [{
-    name: String,
-    url: String,
-    uploadedAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
-  location: {
-    city: String,
-    country: String
-  },
-  urgency: {
-    type: String,
-    enum: ['low', 'medium', 'high', 'critical'],
-    default: 'medium'
   },
   supporters: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -86,14 +93,12 @@ const requestSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Calculate progress percentage
+// Calculate progress percentage (only for Micro-Funding)
 requestSchema.virtual('progress').get(function() {
-  return Math.round((this.currentAmount / this.targetAmount) * 100);
-});
-
-// Check if request is expired
-requestSchema.virtual('isExpired').get(function() {
-  return new Date() > this.deadline;
+  if (this.category === 'Micro-Funding' && this.amount) {
+    return Math.round((this.currentAmount / this.amount) * 100);
+  }
+  return 0;
 });
 
 // Ensure virtuals are included in JSON

@@ -81,18 +81,84 @@ export const getRequestById = async (req, res) => {
 // @access  Private
 export const createRequest = async (req, res) => {
   try {
+    const { 
+      title, 
+      description, 
+      category, 
+      urgency, 
+      itemLostLocation, 
+      amount, 
+      proofDocument,
+      anonymous 
+    } = req.body;
+
+    // Validate required fields
+    if (!title || !description || !category || !urgency) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide all required fields: title, description, category, and urgency'
+      });
+    }
+
+    // Validate conditional fields based on category
+    if (category === 'Lost Item' && !itemLostLocation) {
+      return res.status(400).json({
+        success: false,
+        message: 'Item lost location is required for Lost Item category'
+      });
+    }
+
+    if (category === 'Micro-Funding' && !amount) {
+      return res.status(400).json({
+        success: false,
+        message: 'Amount is required for Micro-Funding category'
+      });
+    }
+
+    // Prepare request data
     const requestData = {
-      ...req.body,
-      requester: req.user._id
+      title,
+      description,
+      category,
+      urgency,
+      requester: req.user._id,
+      anonymous: anonymous || false
     };
+
+    // Add conditional fields only if category matches
+    if (category === 'Lost Item') {
+      requestData.itemLostLocation = itemLostLocation;
+    }
+
+    if (category === 'Micro-Funding') {
+      requestData.amount = amount;
+    }
+
+    // Add proof document if provided
+    if (proofDocument) {
+      requestData.proofDocument = proofDocument;
+    }
 
     const request = await Request.create(requestData);
 
+    // Populate requester info before sending response
+    await request.populate('requester', 'name email avatar');
+
     res.status(201).json({
       success: true,
+      message: 'Request created successfully',
       data: request
     });
   } catch (error) {
+    // Handle validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: messages.join(', ')
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: error.message

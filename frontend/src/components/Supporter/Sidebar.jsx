@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Search, 
@@ -11,9 +11,17 @@ import {
   X
 } from 'lucide-react';
 import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   const menuItems = [
     { path: '/supporter/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -88,7 +96,10 @@ const Sidebar = () => {
 
           {/* Logout Button */}
           <div className="p-4 border-t border-gray-200">
-            <button className="flex items-center space-x-3 w-full px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors">
+            <button 
+              onClick={handleLogout}
+              className="flex items-center space-x-3 w-full px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+            >
               <LogOut size={20} />
               <span>Logout</span>
             </button>
