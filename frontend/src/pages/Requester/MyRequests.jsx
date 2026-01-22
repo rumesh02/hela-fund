@@ -165,7 +165,7 @@ const MyRequests = () => {
           <div className="bg-blue-50 p-2 rounded-xl">
             <Filter size={22} className="text-blue-600" />
           </div>
-          {['all', 'Lost Item', 'Micro Funding', 'Community Help'].map((category) => (
+          {['all', 'Lost Item', 'Micro-Funding', 'Community Help'].map((category) => (
             <button
               key={category}
               onClick={() => setCategoryFilter(category)}
