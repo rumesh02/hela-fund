@@ -1,97 +1,111 @@
 import { useState } from 'react';
-import { Search, Filter, MapPin, AlertCircle, Calendar, Eye } from 'lucide-react';
+import { Search, Filter, Calendar, Eye, DollarSign, MapPin, AlertCircle, Clock, Users } from 'lucide-react';
 import RequestDetailsModal from '../../components/Supporter/RequestDetailsModal';
 
 const BrowseRequests = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('Micro-Funding');
   const [selectedUrgency, setSelectedUrgency] = useState('all');
-  const [selectedLocation, setSelectedLocation] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState('all');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const categories = ['All', 'Books', 'Electronics', 'Transport', 'Medical', 'Food', 'Other'];
-  const urgencies = ['All', 'High', 'Medium', 'Low'];
-  const locations = ['All', 'Colombo', 'Kandy', 'Galle', 'Jaffna', 'Kurunegala'];
-
-  const requests = [
+  // Sample data - replace with API calls later
+  const microFundingRequests = [
     {
       id: 1,
       title: 'Need Laptop for Online Classes',
-      category: 'Electronics',
+      description: 'My laptop broke down and I urgently need one for online lectures and assignments. I am a computer science student and cannot continue without it.',
       urgency: 'High',
-      location: 'Colombo',
+      amount: 50000,
+      currentAmount: 15000,
+      currency: 'Rupees',
       requester: 'Kasun Perera',
-      university: 'University of Colombo',
-      description: 'My laptop broke down and I urgently need one for online lectures and assignments.',
-      postedDate: '2024-11-03',
-      estimatedAmount: 'LKR 50,000',
-      status: 'active'
+      anonymous: false,
+      createdAt: '2024-11-03',
+      status: 'active',
+      contributionsCount: 5
     },
     {
       id: 2,
-      title: 'Engineering Textbooks Required',
-      category: 'Books',
-      urgency: 'Medium',
-      location: 'Kandy',
-      requester: 'Nimali Silva',
-      university: 'University of Peradeniya',
-      description: 'Looking for second-hand engineering textbooks for second year studies.',
-      postedDate: '2024-11-04',
-      estimatedAmount: 'LKR 8,000',
-      status: 'active'
+      title: 'Medical Emergency Support',
+      description: 'Need financial assistance for medical treatment of my mother.',
+      urgency: 'High',
+      amount: 100000,
+      currentAmount: 45000,
+      currency: 'Rupees',
+      requester: 'Nimal Silva',
+      anonymous: false,
+      createdAt: '2024-11-05',
+      status: 'active',
+      contributionsCount: 12
     },
     {
       id: 3,
-      title: 'Monthly Bus Pass Support',
-      category: 'Transport',
+      title: 'Books for Engineering Course',
+      description: 'Need to purchase essential textbooks for my engineering degree.',
       urgency: 'Medium',
-      location: 'Galle',
-      requester: 'Amila Fernando',
-      university: 'University of Ruhuna',
-      description: 'Need help with monthly transport expenses to attend university.',
-      postedDate: '2024-11-02',
-      estimatedAmount: 'LKR 3,500',
-      status: 'active'
-    },
+      amount: 25000,
+      currentAmount: 8000,
+      currency: 'Rupees',
+      requester: 'Amaya Fernando',
+      anonymous: false,
+      createdAt: '2024-11-01',
+      status: 'active',
+      contributionsCount: 3
+    }
+  ];
+
+  const lostItemRequests = [
     {
       id: 4,
-      title: 'Internet Data Package',
-      category: 'Electronics',
-      urgency: 'High',
-      location: 'Jaffna',
-      requester: 'Sanduni Rathnayake',
-      university: 'University of Jaffna',
-      description: 'Required internet data package for research work and online submissions.',
-      postedDate: '2024-11-05',
-      estimatedAmount: 'LKR 2,000',
-      status: 'active'
+      title: 'Lost Student ID Card',
+      description: 'Lost my student ID card near the library. It has my photo and student number ST12345.',
+      urgency: 'Medium',
+      itemLostLocation: 'University Library, Ground Floor',
+      requester: 'Saman Kumara',
+      anonymous: false,
+      createdAt: '2024-11-04',
+      status: 'active',
+      views: 45
     },
     {
       id: 5,
-      title: 'Medical Supplies for Surgery Recovery',
-      category: 'Medical',
+      title: 'Missing Laptop Bag',
+      description: 'Lost my black laptop bag containing important notes and assignments.',
       urgency: 'High',
-      location: 'Colombo',
-      requester: 'Ruwan Wickramasinghe',
-      university: 'University of Sri Jayewardenepura',
-      description: 'Need medical supplies and medicines for post-surgery recovery to continue studies.',
-      postedDate: '2024-11-01',
-      estimatedAmount: 'LKR 15,000',
-      status: 'active'
-    },
+      itemLostLocation: 'Cafeteria Area',
+      requester: 'Priya Jayasinghe',
+      anonymous: false,
+      createdAt: '2024-11-06',
+      status: 'active',
+      views: 23
+    }
+  ];
+
+  const communityHelpRequests = [
     {
       id: 6,
-      title: 'Meal Plan Support',
-      category: 'Food',
+      title: 'Looking for Study Group Members',
+      description: 'Forming a study group for Advanced Mathematics. Looking for 3-4 dedicated members.',
       urgency: 'Low',
-      location: 'Kurunegala',
-      requester: 'Nimal Jayasuriya',
-      university: 'Wayamba University',
-      description: 'Looking for meal support for the next two weeks during exam period.',
-      postedDate: '2024-11-04',
-      estimatedAmount: 'LKR 5,000',
-      status: 'active'
+      requester: 'Dilshan Perera',
+      anonymous: false,
+      createdAt: '2024-11-02',
+      status: 'active',
+      views: 67,
+      supporters: 8
+    },
+    {
+      id: 7,
+      title: 'Need Tutoring in Physics',
+      description: 'Struggling with quantum physics concepts. Looking for someone who can help explain the basics.',
+      urgency: 'Medium',
+      requester: 'Chamari De Silva',
+      anonymous: false,
+      createdAt: '2024-11-05',
+      status: 'active',
+      views: 34,
+      supporters: 2
     }
   ];
 
@@ -104,113 +118,129 @@ const BrowseRequests = () => {
     return colors[urgency] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
-  const getCategoryIcon = (category) => {
-    const icons = {
-      Electronics: '💻',
-      Books: '📚',
-      Transport: '🚌',
-      Medical: '⚕️',
-      Food: '🍽️',
-      Other: '📦'
-    };
-    return icons[category] || '📦';
+  const getCurrentRequests = () => {
+    switch (activeCategory) {
+      case 'Micro-Funding':
+        return microFundingRequests;
+      case 'Lost Item':
+        return lostItemRequests;
+      case 'Community Help':
+        return communityHelpRequests;
+      default:
+        return [];
+    }
   };
 
-  const filteredRequests = requests.filter((request) => {
-    const categoryMatch = selectedCategory === 'all' || request.category === selectedCategory;
-    const urgencyMatch = selectedUrgency === 'all' || request.urgency === selectedUrgency;
-    const locationMatch = selectedLocation === 'all' || request.location === selectedLocation;
-    const searchMatch =
-      request.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      request.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return categoryMatch && urgencyMatch && locationMatch && searchMatch;
-  });
+  const filterRequests = (requests) => {
+    return requests.filter((request) => {
+      const urgencyMatch = selectedUrgency === 'all' || request.urgency === selectedUrgency;
+      
+      let dateMatch = true;
+      if (dateFilter !== 'all') {
+        const requestDate = new Date(request.createdAt);
+        const today = new Date();
+        const diffTime = Math.abs(today - requestDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (dateFilter === 'today') dateMatch = diffDays <= 1;
+        else if (dateFilter === 'week') dateMatch = diffDays <= 7;
+        else if (dateFilter === 'month') dateMatch = diffDays <= 30;
+      }
+      
+      return urgencyMatch && dateMatch;
+    });
+  };
 
   const handleViewDetails = (request) => {
     setSelectedRequest(request);
     setIsModalOpen(true);
   };
 
+  const filteredRequests = filterRequests(getCurrentRequests());
+
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 p-6 space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800">Browse Requests</h1>
-        <p className="text-gray-600 mt-2">Find students who need your support</p>
+      <div className="bg-white border-l-4 border-teal-600 rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Browse Requests</h1>
+        <p className="text-gray-600 mt-1">Explore and support student requests across different categories</p>
+      </div>
+
+      {/* Category Selection Tabs */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-2">
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            onClick={() => setActiveCategory('Micro-Funding')}
+            className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+              activeCategory === 'Micro-Funding'
+                ? 'bg-teal-600 text-white shadow-md'
+                : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
+            }`}
+          >
+            <DollarSign className="inline-block mr-2" size={20} />
+            Micro Funding
+          </button>
+          <button
+            onClick={() => setActiveCategory('Lost Item')}
+            className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+              activeCategory === 'Lost Item'
+                ? 'bg-teal-600 text-white shadow-md'
+                : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
+            }`}
+          >
+            <MapPin className="inline-block mr-2" size={20} />
+            Lost Items
+          </button>
+          <button
+            onClick={() => setActiveCategory('Community Help')}
+            className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 ${
+              activeCategory === 'Community Help'
+                ? 'bg-teal-600 text-white shadow-md'
+                : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
+            }`}
+          >
+            <Users className="inline-block mr-2" size={20} />
+            Community Help
+          </button>
+        </div>
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        {/* Search Bar */}
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search requests by title or description..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        {/* Filter Options */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Category Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Filter size={16} className="inline mr-1" />
-              Category
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat.toLowerCase()}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          </div>
-
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Urgency Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <AlertCircle size={16} className="inline mr-1" />
-              Urgency
+              Urgency Level
             </label>
             <select
               value={selectedUrgency}
               onChange={(e) => setSelectedUrgency(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             >
-              {urgencies.map((urg) => (
-                <option key={urg} value={urg.toLowerCase()}>
-                  {urg}
-                </option>
-              ))}
+              <option value="all">All Urgencies</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
 
-          {/* Location Filter */}
+          {/* Date Filter */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              <MapPin size={16} className="inline mr-1" />
-              Location
+              <Calendar size={16} className="inline mr-1" />
+              Date Posted
             </label>
             <select
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             >
-              {locations.map((loc) => (
-                <option key={loc} value={loc.toLowerCase()}>
-                  {loc}
-                </option>
-              ))}
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
             </select>
           </div>
         </div>
@@ -224,65 +254,211 @@ const BrowseRequests = () => {
         </div>
       </div>
 
-      {/* Requests Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRequests.map((request) => (
-          <div
-            key={request.id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-          >
-            {/* Category Icon & Urgency Badge */}
-            <div className="flex items-start justify-between mb-4">
-              <div className="text-3xl">{getCategoryIcon(request.category)}</div>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium border ${getUrgencyColor(
-                  request.urgency
-                )}`}
-              >
-                {request.urgency}
-              </span>
-            </div>
-
-            {/* Title */}
-            <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{request.title}</h3>
-
-            {/* Description */}
-            <p className="text-sm text-gray-600 mb-4 line-clamp-3">{request.description}</p>
-
-            {/* Requester Info */}
-            <div className="space-y-2 mb-4 pb-4 border-b border-gray-200">
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Requester:</span> {request.requester}
-              </p>
-              <p className="text-xs text-gray-500">{request.university}</p>
-            </div>
-
-            {/* Meta Info */}
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center text-xs text-gray-500">
-                <MapPin size={14} className="mr-1" />
-                {request.location}
-              </div>
-              <div className="flex items-center text-xs text-gray-500">
-                <Calendar size={14} className="mr-1" />
-                Posted: {new Date(request.postedDate).toLocaleDateString()}
-              </div>
-              <div className="text-sm font-medium text-blue-600">
-                Estimated: {request.estimatedAmount}
-              </div>
-            </div>
-
-            {/* Action Button */}
-            <button
-              onClick={() => handleViewDetails(request)}
-              className="w-full flex items-center justify-center space-x-2 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+      {/* Requests Grid - Category Specific Views */}
+      {activeCategory === 'Micro-Funding' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRequests.map((request) => (
+            <div
+              key={request.id}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <Eye size={18} />
-              <span>View Details</span>
-            </button>
-          </div>
-        ))}
-      </div>
+              <div className="p-6">
+                {/* Urgency Badge */}
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getUrgencyColor(
+                      request.urgency
+                    )}`}
+                  >
+                    {request.urgency} Priority
+                  </span>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Clock size={14} className="mr-1" />
+                    {new Date(request.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{request.title}</h3>
+
+                {/* Description */}
+                <p className="text-sm text-gray-600 mb-4 line-clamp-3">{request.description}</p>
+
+                {/* Funding Progress */}
+                <div className="mb-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-medium text-gray-700">
+                      {request.currency} {request.currentAmount.toLocaleString()}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      of {request.currency} {request.amount.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-teal-600 h-2 rounded-full transition-all"
+                      style={{ width: `${Math.min((request.currentAmount / request.amount) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {Math.round((request.currentAmount / request.amount) * 100)}% funded
+                  </p>
+                </div>
+
+                {/* Requester Info */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Requester:</span>{' '}
+                    {request.anonymous ? 'Anonymous' : request.requester}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1 flex items-center">
+                    <Users size={14} className="mr-1" />
+                    {request.contributionsCount} supporter{request.contributionsCount !== 1 && 's'}
+                  </p>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() => handleViewDetails(request)}
+                  className="w-full flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
+                >
+                  <Eye size={18} />
+                  <span>View Details & Support</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Lost Items View */}
+      {activeCategory === 'Lost Item' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRequests.map((request) => (
+            <div
+              key={request.id}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="p-6">
+                {/* Urgency Badge */}
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getUrgencyColor(
+                      request.urgency
+                    )}`}
+                  >
+                    {request.urgency} Priority
+                  </span>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Clock size={14} className="mr-1" />
+                    {new Date(request.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{request.title}</h3>
+
+                {/* Description */}
+                <p className="text-sm text-gray-600 mb-4 line-clamp-3">{request.description}</p>
+
+                {/* Lost Location */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <div className="flex items-start text-sm text-gray-700">
+                    <MapPin size={16} className="mr-2 mt-0.5 flex-shrink-0 text-red-500" />
+                    <div>
+                      <span className="font-medium">Lost at:</span>
+                      <p className="text-gray-600 mt-1">{request.itemLostLocation}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Requester Info */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Posted by:</span>{' '}
+                    {request.anonymous ? 'Anonymous' : request.requester}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1 flex items-center">
+                    <Eye size={14} className="mr-1" />
+                    {request.views} view{request.views !== 1 && 's'}
+                  </p>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() => handleViewDetails(request)}
+                  className="w-full flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
+                >
+                  <Eye size={18} />
+                  <span>View Full Details</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Community Help View */}
+      {activeCategory === 'Community Help' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredRequests.map((request) => (
+            <div
+              key={request.id}
+              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+            >
+              <div className="p-6">
+                {/* Urgency Badge */}
+                <div className="flex items-start justify-between mb-4">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium border ${getUrgencyColor(
+                      request.urgency
+                    )}`}
+                  >
+                    {request.urgency} Priority
+                  </span>
+                  <div className="flex items-center text-xs text-gray-500">
+                    <Clock size={14} className="mr-1" />
+                    {new Date(request.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+
+                {/* Title */}
+                <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{request.title}</h3>
+
+                {/* Description */}
+                <p className="text-sm text-gray-600 mb-4 line-clamp-4">{request.description}</p>
+
+                {/* Requester Info */}
+                <div className="mb-4 pb-4 border-b border-gray-200">
+                  <p className="text-sm text-gray-700">
+                    <span className="font-medium">Posted by:</span>{' '}
+                    {request.anonymous ? 'Anonymous' : request.requester}
+                  </p>
+                  <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
+                    <span className="flex items-center">
+                      <Users size={14} className="mr-1" />
+                      {request.supporters || 0} helper{request.supporters !== 1 && 's'}
+                    </span>
+                    <span className="flex items-center">
+                      <Eye size={14} className="mr-1" />
+                      {request.views} view{request.views !== 1 && 's'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  onClick={() => handleViewDetails(request)}
+                  className="w-full flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
+                >
+                  <Eye size={18} />
+                  <span>View Details & Help</span>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* No Results */}
       {filteredRequests.length === 0 && (

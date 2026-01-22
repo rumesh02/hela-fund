@@ -1,4 +1,4 @@
-import { Bell, User, LogOut } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
@@ -16,40 +16,26 @@ const Header = () => {
   const initials = getInitials(displayName);
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* App Name */}
-        <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold text-blue-600">Hela Fund</h1>
-          <span className="hidden md:inline-block text-sm text-gray-500 border-l pl-4">
-            Supporter Portal
-          </span>
-        </div>
-
-        {/* Right Side - Notifications & User Info */}
-        <div className="flex items-center space-x-6">
+    <header className="bg-gradient-to-r from-white to-teal-50 shadow-lg border-b-2 border-teal-100 sticky top-0 z-20">
+      <div className="flex items-center justify-end px-6 py-4">
+        {/* Right Section */}
+        <div className="flex items-center gap-4">
           {/* Notifications */}
-          <button className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition">
-            <Bell size={20} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          <button className="relative p-3 text-gray-600 hover:bg-teal-50 rounded-xl transition-all hover:shadow-md">
+            <Bell size={24} strokeWidth={2} />
+            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white"></span>
           </button>
 
-          {/* User Info */}
-          <div className="flex items-center space-x-3">
-            <div className="hidden md:block text-right">
-              <p className="text-sm font-medium text-gray-700">{displayName}</p>
-              <p className="text-xs text-gray-500">Trust Score: 4.8/5</p>
+          {/* User Profile */}
+          <div className="flex items-center gap-3 pl-4 border-l-2 border-gray-200">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-gray-900">{displayName}</p>
+              <p className="text-xs text-teal-600 font-medium">Supporter</p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-sm font-semibold text-blue-600">{initials}</span>
+            <div className="w-11 h-11 bg-gradient-to-br from-teal-600 to-teal-700 rounded-xl flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-teal-100">
+              {initials}
             </div>
           </div>
-
-          {/* Logout Button */}
-          <button className="hidden md:flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition">
-            <LogOut size={18} />
-            <span className="text-sm">Logout</span>
-          </button>
         </div>
       </div>
     </header>

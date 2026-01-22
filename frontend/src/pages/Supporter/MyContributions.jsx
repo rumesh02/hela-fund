@@ -132,44 +132,44 @@ const MyContributions = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-teal-50 p-6 space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-800">My Contributions</h1>
-        <p className="text-gray-600 mt-2">Track all the requests you've helped with</p>
+      <div className="bg-white border-l-4 border-teal-600 rounded-xl shadow-md p-6">
+        <h1 className="text-2xl font-bold text-gray-900">My Contributions</h1>
+        <p className="text-gray-600 mt-1">Track all the requests you've helped with</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <p className="text-sm text-gray-600 mb-1">Total Contributions</p>
-          <p className="text-3xl font-bold text-gray-800">{stats.total}</p>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+          <p className="text-sm text-gray-600 font-semibold uppercase tracking-wider mb-1">Total Contributions</p>
+          <p className="text-4xl font-bold text-gray-900 mt-3">{stats.total}</p>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-700 mb-1">Pending</p>
-          <p className="text-3xl font-bold text-blue-800">{stats.pending}</p>
+        <div className="bg-white rounded-2xl shadow-lg border border-blue-100 p-6">
+          <p className="text-sm text-blue-700 font-semibold uppercase tracking-wider mb-1">Pending</p>
+          <p className="text-4xl font-bold text-blue-800 mt-3">{stats.pending}</p>
         </div>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-sm text-yellow-700 mb-1">Ongoing</p>
-          <p className="text-3xl font-bold text-yellow-800">{stats.ongoing}</p>
+        <div className="bg-white rounded-2xl shadow-lg border border-amber-100 p-6">
+          <p className="text-sm text-amber-700 font-semibold uppercase tracking-wider mb-1">Ongoing</p>
+          <p className="text-4xl font-bold text-amber-800 mt-3">{stats.ongoing}</p>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-sm text-green-700 mb-1">Completed</p>
-          <p className="text-3xl font-bold text-green-800">{stats.completed}</p>
+        <div className="bg-white rounded-2xl shadow-lg border border-emerald-100 p-6">
+          <p className="text-sm text-emerald-700 font-semibold uppercase tracking-wider mb-1">Completed</p>
+          <p className="text-4xl font-bold text-emerald-800 mt-3">{stats.completed}</p>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-2">
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-2">
         <div className="flex flex-wrap gap-2">
           {['all', 'pending', 'ongoing', 'completed'].map((status) => (
             <button
               key={status}
               onClick={() => setSelectedStatus(status)}
-              className={`px-6 py-2 rounded-lg font-medium capitalize transition ${
+              className={`px-6 py-3 rounded-xl font-medium capitalize transition-all duration-200 ${
                 selectedStatus === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-teal-600 text-white shadow-md'
+                  : 'bg-gray-50 text-gray-700 hover:bg-teal-50 hover:text-teal-700'
               }`}
             >
               {status}
@@ -187,7 +187,7 @@ const MyContributions = () => {
           return (
             <div
               key={contribution.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-200"
             >
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                 {/* Left Section - Request Info */}
@@ -224,7 +224,7 @@ const MyContributions = () => {
                 {/* Right Section - Status & Actions */}
                 <div className="flex flex-col lg:items-end space-y-3">
                   {/* Amount */}
-                  <div className="text-lg font-bold text-blue-600">{contribution.amount}</div>
+                  <div className="text-lg font-bold text-teal-600">{contribution.amount}</div>
 
                   {/* Status Badge */}
                   <span
@@ -236,11 +236,11 @@ const MyContributions = () => {
 
                   {/* Action Buttons */}
                   <div className="flex space-x-2">
-                    <button className="flex items-center space-x-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
+                    <button className="flex items-center space-x-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition text-sm">
                       <MessageSquare size={16} />
                       <span>Message</span>
                       {contribution.messages > 0 && (
-                        <span className="ml-1 px-2 py-0.5 bg-white text-blue-600 rounded-full text-xs font-medium">
+                        <span className="ml-1 px-2 py-0.5 bg-white text-teal-600 rounded-full text-xs font-medium">
                           {contribution.messages}
                         </span>
                       )}
@@ -259,13 +259,13 @@ const MyContributions = () => {
 
       {/* No Results */}
       {filteredContributions.length === 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-12 text-center">
           <div className="text-6xl mb-4">📭</div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">No contributions found</h3>
           <p className="text-gray-600 mb-4">
             You haven't made any contributions with this status yet
           </p>
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
+          <button className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium">
             Browse Requests
           </button>
         </div>
