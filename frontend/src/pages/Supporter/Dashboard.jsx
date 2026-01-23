@@ -115,11 +115,11 @@ const Dashboard = () => {
                   <h3 className="font-semibold text-gray-900 text-lg">{activity.title}</h3>
                   <div className="flex items-center gap-3 mt-2 text-sm text-gray-600">
                     <span className="px-3 py-1 bg-white rounded-lg text-xs font-medium border border-gray-200 shadow-sm">Requester: {activity.requester}</span>
-                    <span className="font-medium">📅 {activity.date}</span>
+                    <span className="font-medium"> {activity.date}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span
+                  {/* <span
                     className={`px-4 py-2 rounded-xl text-xs font-bold shadow-sm ${
                       activity.urgency === 'High'
                         ? 'bg-rose-100 text-rose-700 border border-rose-200'
@@ -138,7 +138,7 @@ const Dashboard = () => {
                     }`}
                   >
                     {activity.status}
-                  </span>
+                  </span> */}
                 </div>
               </div>
             ))}

@@ -14,6 +14,9 @@ const RequestDetailsModal = ({ request, onClose }) => {
 
   const getCategoryIcon = (category) => {
     const icons = {
+      'Micro-Funding': '💰',
+      'Lost Item': '🔍',
+      'Community Help': '🤝',
       Electronics: '💻',
       Books: '📚',
       Transport: '🚌',
@@ -30,7 +33,7 @@ const RequestDetailsModal = ({ request, onClose }) => {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-start justify-between">
           <div className="flex items-start space-x-4 flex-1">
-            <div className="text-4xl">{getCategoryIcon(request.category)}</div>
+            <div className="text-4xl">{getCategoryIcon(request.requestType)}</div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-800 mb-2">{request.title}</h2>
               <span
@@ -65,17 +68,20 @@ const RequestDetailsModal = ({ request, onClose }) => {
                 <User size={18} />
                 <span className="text-sm font-medium">Requester</span>
               </div>
-              <p className="text-gray-800 font-medium">{request.requester}</p>
-              <p className="text-sm text-gray-500">{request.university}</p>
+              <p className="text-gray-800 font-medium">
+                {request.anonymous ? 'Anonymous' : (request.requester?.name || 'Unknown')}
+              </p>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                <MapPin size={18} />
-                <span className="text-sm font-medium">Location</span>
+            {request.itemLostLocation && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                  <MapPin size={18} />
+                  <span className="text-sm font-medium">Lost Location</span>
+                </div>
+                <p className="text-gray-800 font-medium">{request.itemLostLocation}</p>
               </div>
-              <p className="text-gray-800 font-medium">{request.location}</p>
-            </div>
+            )}
 
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center space-x-2 text-gray-600 mb-2">
@@ -83,7 +89,7 @@ const RequestDetailsModal = ({ request, onClose }) => {
                 <span className="text-sm font-medium">Posted Date</span>
               </div>
               <p className="text-gray-800 font-medium">
-                {new Date(request.postedDate).toLocaleDateString('en-US', {
+                {new Date(request.createdAt).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
@@ -91,20 +97,50 @@ const RequestDetailsModal = ({ request, onClose }) => {
               </p>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                <Banknote size={18} />
-                <span className="text-sm font-medium">Estimated Amount</span>
+            {request.amount && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center space-x-2 text-gray-600 mb-2">
+                  <Banknote size={18} />
+                  <span className="text-sm font-medium">Amount Needed</span>
+                </div>
+                <p className="text-gray-800 font-medium text-lg">
+                  {request.currency} {request.amount.toLocaleString()}
+                </p>
               </div>
-              <p className="text-gray-800 font-medium text-lg">{request.estimatedAmount}</p>
-            </div>
+            )}
           </div>
+
+          {/* Funding Progress - Only for Micro-Funding */}
+          {request.requestType === 'Micro-Funding' && request.amount && (
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Funding Progress</span>
+                <span className="text-sm text-gray-600">
+                  {Math.round((request.currentAmount / request.amount) * 100)}% funded
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                <div
+                  className="bg-teal-600 h-3 rounded-full transition-all"
+                  style={{ width: `${Math.min((request.currentAmount / request.amount) * 100, 100)}%` }}
+                ></div>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-700 font-medium">
+                  {request.currency} {request.currentAmount.toLocaleString()} raised
+                </span>
+                <span className="text-gray-500">
+                  {request.contributionsCount || 0} supporter{(request.contributionsCount || 0) !== 1 && 's'}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Category Badge */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center space-x-2">
               <AlertCircle className="text-blue-600" size={20} />
-              <span className="text-sm font-medium text-blue-800">Category: {request.category}</span>
+              <span className="text-sm font-medium text-blue-800">Category: {request.requestType}</span>
             </div>
           </div>
 
@@ -136,7 +172,7 @@ const RequestDetailsModal = ({ request, onClose }) => {
           >
             Close
           </button>
-          <button className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium flex items-center justify-center space-x-2">
+          <button className="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium flex items-center justify-center space-x-2">
             <Heart size={20} />
             <span>Offer Help</span>
           </button>

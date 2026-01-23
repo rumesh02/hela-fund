@@ -4,9 +4,9 @@ import { User, Mail, Phone, MapPin, Calendar, Award, Edit2, Save, X, Shield } fr
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: 'Amantha',
-    lastName: 'Sandeepa',
-    email: 'amantha.sandeepa@gmail.com',
+    firstName: 'Kevin',
+    lastName: 'Weston',
+    email: 'kevin@gmail.com',
     phone: '+94 77 457 4488',
     address: '12, Main Street, Colombo 03',
     city: 'Dehiwala',

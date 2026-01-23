@@ -86,7 +86,7 @@ const Dashboard = () => {
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 font-semibold uppercase tracking-wider">{stat.title}</p>
+                <p className="text-sm text-gray-600 font-semibold tracking-wider">{stat.title}</p>
                 <p className="text-4xl font-bold text-gray-900 mt-3">{stat.value}</p>
               </div>
               <div className={`${stat.bgLight} p-4 rounded-xl shadow-sm`}>
