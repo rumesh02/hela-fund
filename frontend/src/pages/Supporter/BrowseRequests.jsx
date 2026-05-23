@@ -68,6 +68,28 @@ const BrowseRequests = () => {
     setIsModalOpen(true);
   };
 
+  const handleSupportSuccess = ({ requestId, amount }) => {
+    setRequests((prev) =>
+      prev.map((request) => {
+        if (request._id !== requestId) return request;
+        return {
+          ...request,
+          currentAmount: (request.currentAmount || 0) + amount,
+          contributionsCount: (request.contributionsCount || 0) + 1
+        };
+      })
+    );
+
+    setSelectedRequest((prev) => {
+      if (!prev || prev._id !== requestId) return prev;
+      return {
+        ...prev,
+        currentAmount: (prev.currentAmount || 0) + amount,
+        contributionsCount: (prev.contributionsCount || 0) + 1
+      };
+    });
+  };
+
   const filteredRequests = filterRequests(requests);
 
   return (
@@ -403,6 +425,7 @@ const BrowseRequests = () => {
         <RequestDetailsModal
           request={selectedRequest}
           onClose={() => setIsModalOpen(false)}
+          onSupportSuccess={handleSupportSuccess}
         />
       )}
     </div>

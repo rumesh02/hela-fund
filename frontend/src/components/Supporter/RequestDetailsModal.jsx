@@ -1,7 +1,14 @@
+import { useState } from 'react';
 import { X, MapPin, Calendar, User, AlertCircle, Banknote, Heart } from 'lucide-react';
+import api from '../../utils/api';
 
-const RequestDetailsModal = ({ request, onClose }) => {
+const RequestDetailsModal = ({ request, onClose, onSupportSuccess }) => {
   if (!request) return null;
+
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [supportAmount, setSupportAmount] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const getUrgencyColor = (urgency) => {
     const colors = {
@@ -27,13 +34,55 @@ const RequestDetailsModal = ({ request, onClose }) => {
     return icons[category] || '📦';
   };
 
+  const isMicroFunding = request.category === 'Micro-Funding';
+  const remainingAmount = request.amount
+    ? Math.max(request.amount - (request.currentAmount || 0), 0)
+    : 0;
+
+  const handleOpenSupport = () => {
+    setSubmitError(null);
+    setSupportAmount('');
+    setIsSupportOpen(true);
+  };
+
+  const handleSubmitSupport = async () => {
+    const numericAmount = Number(supportAmount);
+    if (!numericAmount || Number.isNaN(numericAmount) || numericAmount <= 0) {
+      setSubmitError('Enter a valid amount');
+      return;
+    }
+
+    if (remainingAmount > 0 && numericAmount > remainingAmount) {
+      setSubmitError('Amount exceeds remaining goal');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      await api.post('/contributions', {
+        amount: numericAmount,
+        requestId: request._id,
+        paymentMethod: 'card'
+      });
+      if (onSupportSuccess) {
+        onSupportSuccess({ requestId: request._id, amount: numericAmount });
+      }
+      setIsSupportOpen(false);
+    } catch (error) {
+      setSubmitError(error.message || 'Failed to complete transaction');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-start justify-between">
           <div className="flex items-start space-x-4 flex-1">
-            <div className="text-4xl">{getCategoryIcon(request.requestType)}</div>
+            <div className="text-4xl">{getCategoryIcon(request.category)}</div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-800 mb-2">{request.title}</h2>
               <span
@@ -111,7 +160,7 @@ const RequestDetailsModal = ({ request, onClose }) => {
           </div>
 
           {/* Funding Progress - Only for Micro-Funding */}
-          {request.requestType === 'Micro-Funding' && request.amount && (
+          {request.category === 'Micro-Funding' && request.amount && (
             <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">Funding Progress</span>
@@ -140,7 +189,7 @@ const RequestDetailsModal = ({ request, onClose }) => {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center space-x-2">
               <AlertCircle className="text-blue-600" size={20} />
-              <span className="text-sm font-medium text-blue-800">Category: {request.requestType}</span>
+              <span className="text-sm font-medium text-blue-800">Category: {request.category}</span>
             </div>
           </div>
 
@@ -172,12 +221,83 @@ const RequestDetailsModal = ({ request, onClose }) => {
           >
             Close
           </button>
-          <button className="flex-1 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium flex items-center justify-center space-x-2">
+          <button
+            onClick={handleOpenSupport}
+            className={`flex-1 px-6 py-3 rounded-lg transition font-medium flex items-center justify-center space-x-2 ${
+              isMicroFunding
+                ? 'bg-teal-600 text-white hover:bg-teal-700'
+                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+            }`}
+            disabled={!isMicroFunding}
+          >
             <Heart size={20} />
             <span>Offer Help</span>
           </button>
         </div>
       </div>
+
+      {isSupportOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Support Amount</h3>
+                <p className="text-sm text-gray-600">Enter the amount you want to contribute</p>
+              </div>
+              <button
+                onClick={() => setIsSupportOpen(false)}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-sm text-gray-600">Required amount</p>
+              <p className="text-xl font-bold text-gray-900">
+                {request.currency} {request.amount?.toLocaleString?.() || request.amount}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Remaining: {request.currency} {remainingAmount.toLocaleString()}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Contribution Amount</label>
+              <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                <span className="px-3 text-gray-500">{request.currency}</span>
+                <input
+                  type="number"
+                  min="1"
+                  max={remainingAmount || undefined}
+                  value={supportAmount}
+                  onChange={(event) => setSupportAmount(event.target.value)}
+                  className="w-full px-3 py-2 focus:outline-none"
+                  placeholder="0"
+                />
+              </div>
+              {submitError && <p className="text-sm text-red-600 mt-2">{submitError}</p>}
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setIsSupportOpen(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitSupport}
+                className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Processing...' : 'Complete Transaction'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
