@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const contributionSchema = new mongoose.Schema({
+const supportSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: [true, 'Please add an amount'],
@@ -25,6 +25,10 @@ const contributionSchema = new mongoose.Schema({
     ref: 'Request',
     required: true
   },
+  contribution: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Contribution'
+  },
   paymentMethod: {
     type: String,
     enum: ['card', 'bank_transfer', 'mobile_money', 'crypto', 'other'],
@@ -33,29 +37,22 @@ const contributionSchema = new mongoose.Schema({
   paymentStatus: {
     type: String,
     enum: ['pending', 'completed', 'failed', 'refunded'],
-    default: 'pending'
+    default: 'completed'
   },
   transactionId: {
-    type: String,
-    unique: true,
-    sparse: true
+    type: String
   },
   isAnonymous: {
     type: Boolean,
     default: false
-  },
-  metadata: {
-    type: Map,
-    of: String
   }
 }, {
   timestamps: true
 });
 
-// Index for faster queries
-contributionSchema.index({ supporter: 1, createdAt: -1 });
-contributionSchema.index({ request: 1, createdAt: -1 });
+supportSchema.index({ supporter: 1, createdAt: -1 });
+supportSchema.index({ request: 1, createdAt: -1 });
 
-const Contribution = mongoose.model('Contribution', contributionSchema);
+const Support = mongoose.model('Support', supportSchema);
 
-export default Contribution;
+export default Support;

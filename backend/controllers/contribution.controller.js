@@ -1,4 +1,5 @@
 import Contribution from '../models/Contribution.model.js';
+import Support from '../models/Support.model.js';
 import Request from '../models/Request.model.js';
 import User from '../models/User.model.js';
 
@@ -60,6 +61,20 @@ export const createContribution = async (req, res) => {
   try {
     const { amount, message, requestId, paymentMethod, isAnonymous } = req.body;
 
+    if (!amount || Number.isNaN(Number(amount)) || Number(amount) <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid amount'
+      });
+    }
+
+    if (!paymentMethod) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment method is required'
+      });
+    }
+
     // Check if request exists
     const request = await Request.findById(requestId);
     if (!request) {
@@ -77,20 +92,51 @@ export const createContribution = async (req, res) => {
       });
     }
 
+    const numericAmount = Number(amount);
+    const remainingAmount = request.amount ? request.amount - request.currentAmount : null;
+
+    if (remainingAmount !== null && remainingAmount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'This request is already fully funded'
+      });
+    }
+
+    if (remainingAmount !== null && numericAmount > remainingAmount) {
+      return res.status(400).json({
+        success: false,
+        message: 'Contribution exceeds remaining amount'
+      });
+    }
+
     // Create contribution
     const contribution = await Contribution.create({
-      amount,
+      amount: numericAmount,
       message,
       supporter: req.user._id,
       request: requestId,
       paymentMethod,
+      currency: request.currency,
       isAnonymous: isAnonymous || false,
       paymentStatus: 'completed', // In production, this would be 'pending' until payment is confirmed
       transactionId: `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
     });
 
+    await Support.create({
+      amount: numericAmount,
+      currency: request.currency,
+      message,
+      supporter: req.user._id,
+      request: requestId,
+      contribution: contribution._id,
+      paymentMethod,
+      paymentStatus: 'completed',
+      transactionId: contribution.transactionId,
+      isAnonymous: isAnonymous || false
+    });
+
     // Update request
-    request.currentAmount += amount;
+    request.currentAmount += numericAmount;
     request.contributionsCount += 1;
     
     if (!request.supporters.includes(req.user._id)) {
@@ -98,7 +144,7 @@ export const createContribution = async (req, res) => {
     }
 
     // Check if goal reached
-    if (request.currentAmount >= request.targetAmount) {
+    if (request.amount && request.currentAmount >= request.amount) {
       request.status = 'completed';
     }
 
@@ -131,7 +177,8 @@ export const createContribution = async (req, res) => {
 export const getMyContributions = async (req, res) => {
   try {
     const contributions = await Contribution.find({ supporter: req.user._id })
-      .populate('request', 'title category currentAmount targetAmount')
+      .populate('request', 'title category currentAmount amount status requester')
+      .populate('request.requester', 'name email avatar')
       .sort({ createdAt: -1 });
 
     res.json({
