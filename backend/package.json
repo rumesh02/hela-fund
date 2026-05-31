@@ -9,6 +9,7 @@
     "dev": "nodemon server.js",
     "seed": "node utils/seeder.js",
     "seed:clear": "node utils/seeder.js --clear",
+    "seed:admin": "node utils/adminSeeder.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

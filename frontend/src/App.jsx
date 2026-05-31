@@ -9,6 +9,7 @@ import Signup from './pages/Signup';
 
 // Protected Route Component
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminProtectedRoute from './components/AdminProtectedRoute';
 
 // Requester Imports
 import RequesterLayout from './layouts/RequesterLayout';
@@ -18,6 +19,13 @@ import MyRequests from './pages/Requester/MyRequests';
 import RequesterMessages from './pages/Requester/Messages';
 import RequesterProfile from './pages/Requester/Profile';
 import RequesterSettings from './pages/Requester/Settings';
+
+// Admin Imports
+import AdminLayout from './layouts/AdminLayout';
+import AdminLogin from './pages/Admin/AdminLogin';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import ViewUsers from './pages/Admin/ViewUsers';
+import VerifyRequests from './pages/Admin/VerifyRequests';
 
 // Supporter Imports
 import SupporterLayout from './layouts/SupporterLayout';
@@ -67,6 +75,19 @@ function App() {
           <Route path="messages" element={<SupporterMessages />} />
           <Route path="profile" element={<SupporterProfile />} />
           <Route path="settings" element={<SupporterSettings />} />
+        </Route>
+
+        {/* Admin Routes */}
+        <Route path="/adminlogin" element={<AdminLogin />} />
+        <Route path="/admin" element={
+          <AdminProtectedRoute>
+            <AdminLayout />
+          </AdminProtectedRoute>
+        }>
+          <Route index element={<Navigate to="/admin/dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<ViewUsers />} />
+          <Route path="verify-requests" element={<VerifyRequests />} />
         </Route>
 
         {/* Catch all - redirect to landing */}
