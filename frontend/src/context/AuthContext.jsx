@@ -15,9 +15,10 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [adminUser, setAdminUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
+  // Load user and admin from localStorage on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -28,10 +29,21 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
       }
     }
+
+    const storedAdmin = localStorage.getItem('adminUser');
+    if (storedAdmin) {
+      try {
+        setAdminUser(JSON.parse(storedAdmin));
+      } catch (error) {
+        console.error('Error parsing stored admin:', error);
+        localStorage.removeItem('adminUser');
+      }
+    }
+
     setLoading(false);
   }, []);
 
-  // Save user to localStorage whenever it changes
+  // Sync user to localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
@@ -39,6 +51,15 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('user');
     }
   }, [user]);
+
+  // Sync adminUser to localStorage
+  useEffect(() => {
+    if (adminUser) {
+      localStorage.setItem('adminUser', JSON.stringify(adminUser));
+    } else {
+      localStorage.removeItem('adminUser');
+    }
+  }, [adminUser]);
 
   const login = async (email, password, role) => {
     try {
@@ -139,6 +160,44 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const adminLogin = async (email, password) => {
+    try {
+      const response = await fetch(`${API_URL}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Admin login failed');
+      }
+
+      localStorage.setItem('adminToken', data.data.token);
+
+      const adminData = {
+        id: data.data._id,
+        name: data.data.name,
+        email: data.data.email,
+        token: data.data.token,
+        isAdmin: true,
+      };
+
+      setAdminUser(adminData);
+      return adminData;
+    } catch (error) {
+      console.error('Admin login error:', error);
+      throw error;
+    }
+  };
+
+  const adminLogout = () => {
+    setAdminUser(null);
+    localStorage.removeItem('adminUser');
+    localStorage.removeItem('adminToken');
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -178,7 +237,11 @@ export const AuthProvider = ({ children }) => {
     canAccessRole,
     isAuthenticated: !!user,
     isStudent: user?.accountType === 'student',
-    isSupporter: user?.accountType === 'supporter'
+    isSupporter: user?.accountType === 'supporter',
+    adminUser,
+    adminLogin,
+    adminLogout,
+    isAdmin: !!adminUser,
   };
 
   return (

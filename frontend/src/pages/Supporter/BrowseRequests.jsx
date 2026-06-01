@@ -19,7 +19,7 @@ const BrowseRequests = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await api.get(`/requests?category=${activeCategory}&limit=100`);
+        const response = await api.get(`/requests?category=${activeCategory}&isVerified=true&limit=100`);
         setRequests(response.data || []);
       } catch (err) {
         console.error('Error fetching requests:', err);

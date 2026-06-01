@@ -148,6 +148,15 @@ export const login = async (req, res) => {
       });
     }
 
+    // Block login if account is not yet verified by admin
+    if (!user.isVerified) {
+      return res.status(403).json({
+        success: false,
+        code: 'ACCOUNT_PENDING',
+        message: 'Your account is under review, waiting for admin approval.'
+      });
+    }
+
     res.json({
       success: true,
       data: {

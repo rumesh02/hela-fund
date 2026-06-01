@@ -5,14 +5,15 @@ import Request from '../models/Request.model.js';
 // @access  Public
 export const getRequests = async (req, res) => {
   try {
-    const { category, status, urgency, search, page = 1, limit = 10 } = req.query;
+    const { category, status, urgency, search, isVerified, page = 1, limit = 10 } = req.query;
 
     // Build query
     const query = {};
-    
+
     if (category) query.category = category;
     if (status) query.status = status;
     if (urgency) query.urgency = urgency;
+    if (isVerified !== undefined) query.isVerified = isVerified === 'true';
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },

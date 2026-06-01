@@ -25,6 +25,7 @@ const Login = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [pendingApproval, setPendingApproval] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRoleSelect = (selectedRole) => {
@@ -71,9 +72,10 @@ const Login = () => {
     }
 
     setIsLoading(true);
+    setPendingApproval(false);
     try {
       await login(formData.email, formData.password, role);
-      
+
       // Navigate based on role
       if (role === 'requester') {
         navigate('/requester/dashboard');
@@ -82,7 +84,11 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrors({ submit: 'Invalid email or password' });
+      if (error.message?.includes('under review') || error.message?.includes('ACCOUNT_PENDING')) {
+        setPendingApproval(true);
+      } else {
+        setErrors({ submit: error.message || 'Invalid email or password' });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -304,8 +310,18 @@ const Login = () => {
                   {!isLoading && <ArrowRight className="w-5 h-5" />}
                 </button>
 
-                {/* Error Message */}
-                {errors.submit && (
+                {/* Pending approval banner */}
+                {pendingApproval && (
+                  <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 text-center">
+                    <p className="text-amber-800 font-semibold text-sm mb-1">Account Under Review</p>
+                    <p className="text-amber-700 text-sm">
+                      Your account is waiting for admin approval. You'll be able to log in once your account is verified.
+                    </p>
+                  </div>
+                )}
+
+                {/* Generic error message */}
+                {errors.submit && !pendingApproval && (
                   <div className="text-center text-red-600 text-sm">
                     {errors.submit}
                   </div>
