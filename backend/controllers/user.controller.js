@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import User from '../models/User.model.js';
+import Request from '../models/Request.model.js';
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -83,6 +85,34 @@ export const updateUser = async (req, res) => {
       success: false,
       message: error.message
     });
+  }
+};
+
+// @desc    Get requester profile stats (request counts, funds received)
+// @route   GET /api/users/:id/stats
+// @access  Private
+export const getProfileStats = async (req, res) => {
+  try {
+    const userId = new mongoose.Types.ObjectId(req.params.id);
+
+    const [totalRequests, completedRequests, fundsData] = await Promise.all([
+      Request.countDocuments({ requester: userId }),
+      Request.countDocuments({ requester: userId, status: 'completed' }),
+      Request.aggregate([
+        { $match: { requester: userId, category: 'Micro-Funding' } },
+        { $group: { _id: null, total: { $sum: '$currentAmount' } } }
+      ])
+    ]);
+
+    const fundsReceived = fundsData.length > 0 ? fundsData[0].total : 0;
+    const successRate = totalRequests > 0 ? Math.round((completedRequests / totalRequests) * 100) : 0;
+
+    res.json({
+      success: true,
+      data: { totalRequests, completedRequests, fundsReceived, successRate }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
