@@ -1,4 +1,4 @@
-import { Eye, Edit, Trash2, Filter, X } from 'lucide-react';
+import { Eye, Edit, Trash2, Filter, X, CheckCircle, Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
@@ -223,6 +223,9 @@ const MyRequests = () => {
                       Supporters
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                      Verification
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -267,6 +270,19 @@ const MyRequests = () => {
                         <span className="text-sm font-medium text-gray-900">
                           {request.supporters?.length || 0}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        {request.isVerified ? (
+                          <span className="flex items-center gap-1.5 text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full text-xs font-semibold w-fit">
+                            <CheckCircle size={13} />
+                            Verified
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-amber-700 bg-amber-100 px-3 py-1 rounded-full text-xs font-semibold w-fit">
+                            <Clock size={13} />
+                            Pending
+                          </span>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
@@ -403,6 +419,22 @@ const MyRequests = () => {
               <div>
                 <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Supporters</label>
                 <p className="text-gray-900 mt-1">{selectedRequest.supporters?.length || 0} supporter(s)</p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Verification Status</label>
+                <p className="mt-1">
+                  {selectedRequest.isVerified ? (
+                    <span className="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full text-xs font-semibold">
+                      <CheckCircle size={13} />
+                      Verified by Admin
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-amber-700 bg-amber-100 px-3 py-1 rounded-full text-xs font-semibold">
+                      <Clock size={13} />
+                      Pending Admin Review
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
             <div className="p-6 bg-gray-50 flex justify-end">

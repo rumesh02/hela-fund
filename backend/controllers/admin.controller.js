@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.model.js';
 import User from '../models/User.model.js';
+import Request from '../models/Request.model.js';
 
 const generateToken = (id) => {
   return jwt.sign({ id, isAdmin: true }, process.env.JWT_SECRET, {
@@ -101,6 +102,63 @@ export const banUser = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
     res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get all requests (admin view, no isVerified filter)
+// @route   GET /api/admin/requests
+// @access  Private (admin)
+export const getAdminRequests = async (req, res) => {
+  try {
+    const { category } = req.query;
+    const query = {};
+    if (category) query.category = category;
+
+    const requests = await Request.find(query)
+      .populate('requester', 'name email avatar')
+      .sort({ createdAt: -1 });
+
+    res.json({ success: true, data: requests });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Verify a request (set isVerified: true)
+// @route   PUT /api/admin/requests/:id/verify
+// @access  Private (admin)
+export const verifyRequest = async (req, res) => {
+  try {
+    const request = await Request.findByIdAndUpdate(
+      req.params.id,
+      { isVerified: true },
+      { new: true }
+    );
+    if (!request) {
+      return res.status(404).json({ success: false, message: 'Request not found' });
+    }
+    res.json({ success: true, data: request });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Block a request (set isVerified: false)
+// @route   PUT /api/admin/requests/:id/block
+// @access  Private (admin)
+export const blockRequest = async (req, res) => {
+  try {
+    const request = await Request.findByIdAndUpdate(
+      req.params.id,
+      { isVerified: false },
+      { new: true }
+    );
+    if (!request) {
+      return res.status(404).json({ success: false, message: 'Request not found' });
+    }
+    res.json({ success: true, data: request });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
