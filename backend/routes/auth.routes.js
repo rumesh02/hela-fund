@@ -2,6 +2,7 @@ import express from 'express';
 import { body } from 'express-validator';
 import { register, login, getMe, updateProfile } from '../controllers/auth.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
+import { upload } from '../middleware/upload.middleware.js';
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ const loginValidation = [
 ];
 
 // Public routes
-router.post('/register', registerValidation, register);
+router.post('/register', upload.single('studentIdImage'), registerValidation, register);
 router.post('/login', loginValidation, login);
 
 // Protected routes

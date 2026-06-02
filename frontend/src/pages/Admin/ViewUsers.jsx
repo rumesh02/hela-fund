@@ -9,6 +9,8 @@ import {
   Search,
   RefreshCw,
   Clock,
+  IdCard,
+  X,
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -21,6 +23,7 @@ const ViewUsers = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all'); // all | verified | pending | banned
   const [actionLoading, setActionLoading] = useState(null); // userId being acted on
+  const [idPreviewUser, setIdPreviewUser] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -198,6 +201,7 @@ const ViewUsers = () => {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="text-left py-3 px-5 font-semibold text-gray-600">User</th>
+                  <th className="text-left py-3 px-5 font-semibold text-gray-600">Student ID</th>
                   <th className="text-left py-3 px-5 font-semibold text-gray-600">Role</th>
                   <th className="text-left py-3 px-5 font-semibold text-gray-600 hidden md:table-cell">NIC</th>
                   <th className="text-left py-3 px-5 font-semibold text-gray-600 hidden lg:table-cell">Joined</th>
@@ -218,6 +222,19 @@ const ViewUsers = () => {
                           <p className="text-xs text-gray-400">{user.email}</p>
                         </div>
                       </div>
+                    </td>
+                    <td className="py-4 px-5">
+                      {user.role === 'requester' ? (
+                        <button
+                          onClick={() => setIdPreviewUser(user)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-medium rounded-lg transition-colors border border-indigo-200"
+                        >
+                          <IdCard className="w-3.5 h-3.5" />
+                          View ID
+                        </button>
+                      ) : (
+                        <span className="text-gray-300">—</span>
+                      )}
                     </td>
                     <td className="py-4 px-5">
                       <span
@@ -286,6 +303,67 @@ const ViewUsers = () => {
           </div>
         )}
       </div>
+      {/* Student ID Preview Modal */}
+      {idPreviewUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onClick={() => setIdPreviewUser(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <p className="font-semibold text-gray-800">Student ID</p>
+                <p className="text-xs text-gray-400">{idPreviewUser.fullName || idPreviewUser.name || idPreviewUser.email}</p>
+              </div>
+              <button
+                onClick={() => setIdPreviewUser(null)}
+                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-5">
+              <StudentIdPreview value={idPreviewUser.studentIdImage} />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const StudentIdPreview = ({ value }) => {
+  const [imgError, setImgError] = useState(false);
+
+  if (!value) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10 text-gray-400 bg-gray-50 rounded-xl">
+        <IdCard className="w-10 h-10 mb-2 opacity-30" />
+        <p className="text-sm">No student ID uploaded</p>
+      </div>
+    );
+  }
+
+  const looksLikeUrl = value.startsWith('http') || value.startsWith('/') || value.startsWith('data:image');
+
+  if (looksLikeUrl && !imgError) {
+    return (
+      <img
+        src={value}
+        alt="Student ID"
+        onError={() => setImgError(true)}
+        className="w-full rounded-xl border border-gray-200 object-contain max-h-64"
+      />
+    );
+  }
+
+  return (
+    <div className="bg-gray-50 rounded-xl border border-gray-200 p-4">
+      <p className="text-xs text-gray-400 mb-1">Student ID value</p>
+      <p className="text-sm text-gray-700 break-all">{value}</p>
     </div>
   );
 };

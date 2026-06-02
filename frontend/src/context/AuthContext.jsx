@@ -106,39 +106,28 @@ export const AuthProvider = ({ children }) => {
 
   const signup = async (formData, role) => {
     try {
-      // Prepare data based on role
-      let registrationData = {
-        email: formData.email,
-        password: formData.password,
-        role: role,
-        nic: formData.nic,
-      };
+      const body = new FormData();
+      body.append('email', formData.email);
+      body.append('password', formData.password);
+      body.append('role', role);
+      body.append('nic', formData.nic);
 
-      // Add role-specific fields
       if (role === 'requester') {
-        registrationData = {
-          ...registrationData,
-          fullName: formData.fullName,
-          university: formData.university,
-          faculty: formData.faculty,
-          studentId: formData.studentId,
-          mobile: formData.mobile,
-          // Note: studentIdImage will need to be handled separately with file upload
-          studentIdImage: formData.studentIdImage ? 'uploaded' : '', // Placeholder for now
-        };
+        body.append('fullName', formData.fullName);
+        body.append('university', formData.university);
+        body.append('faculty', formData.faculty);
+        body.append('studentId', formData.studentId);
+        body.append('mobile', formData.mobile);
+        if (formData.studentIdImage) {
+          body.append('studentIdImage', formData.studentIdImage);
+        }
       } else if (role === 'supporter') {
-        registrationData = {
-          ...registrationData,
-          name: formData.name,
-        };
+        body.append('name', formData.name);
       }
 
       const response = await fetch(`${API_URL}/auth/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registrationData),
+        body,
       });
 
       const data = await response.json();
