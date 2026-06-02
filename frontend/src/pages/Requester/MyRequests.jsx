@@ -1,7 +1,10 @@
-import { Eye, Edit, Trash2, Filter, X, CheckCircle, Clock } from 'lucide-react';
+import { Eye, Edit, Trash2, Filter, X, CheckCircle, Clock, FileText, ExternalLink } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+
+const isImageFile = (name = '') => /\.(jpe?g|png|gif|webp|bmp)$/i.test(name);
+const isPdfFile = (name = '') => /\.pdf$/i.test(name);
 
 const MyRequests = () => {
   const navigate = useNavigate();
@@ -435,6 +438,64 @@ const MyRequests = () => {
                     </span>
                   )}
                 </p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Proof / Documentation</label>
+                <div className="mt-2">
+                  {selectedRequest.proofDocument?.url ? (
+                    <div className="border border-gray-200 rounded-xl overflow-hidden">
+                      {isImageFile(selectedRequest.proofDocument.name) ? (
+                        <div>
+                          <img
+                            src={selectedRequest.proofDocument.url}
+                            alt={selectedRequest.proofDocument.name}
+                            className="w-full max-h-72 object-contain bg-gray-50"
+                          />
+                          <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <FileText size={15} className="text-gray-500 flex-shrink-0" />
+                              <span className="text-xs text-gray-600 truncate">{selectedRequest.proofDocument.name}</span>
+                            </div>
+                            <a
+                              href={selectedRequest.proofDocument.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 transition flex-shrink-0 ml-3"
+                            >
+                              <ExternalLink size={13} />
+                              Open
+                            </a>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between px-4 py-4 bg-gray-50">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="bg-blue-100 p-2 rounded-lg flex-shrink-0">
+                              <FileText size={18} className="text-blue-600" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-gray-900 truncate">{selectedRequest.proofDocument.name}</p>
+                              <p className="text-xs text-gray-500">
+                                {isPdfFile(selectedRequest.proofDocument.name) ? 'PDF Document' : 'Document'}
+                              </p>
+                            </div>
+                          </div>
+                          <a
+                            href={selectedRequest.proofDocument.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition flex-shrink-0 ml-3"
+                          >
+                            <ExternalLink size={13} />
+                            View Document
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">No proof document uploaded.</p>
+                  )}
+                </div>
               </div>
             </div>
             <div className="p-6 bg-gray-50 flex justify-end">

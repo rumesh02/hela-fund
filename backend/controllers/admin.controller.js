@@ -117,7 +117,7 @@ export const getAdminRequests = async (req, res) => {
     if (category) query.category = category;
 
     const requests = await Request.find(query)
-      .populate('requester', 'name email avatar')
+      .populate('requester', 'name fullName email avatar')
       .sort({ createdAt: -1 });
 
     res.json({ success: true, data: requests });

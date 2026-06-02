@@ -272,17 +272,17 @@ const Profile = () => {
               <TrendingUp size={28} strokeWidth={2.5} />
             </div>
             <div className="space-y-4">
-              <div className="bg-white bg-opacity-10 rounded-xl p-4">
+              <div className="bg-white/10 rounded-xl p-4">
                 <p className="text-blue-200 text-xs font-semibold uppercase mb-1">Member Since</p>
                 <p className="text-white font-bold text-lg">{formatDate(profile.createdAt)}</p>
               </div>
-              <div className="bg-white bg-opacity-10 rounded-xl p-4">
+              <div className="bg-white/10 rounded-xl p-4">
                 <p className="text-blue-200 text-xs font-semibold uppercase mb-1">Verification Status</p>
                 <p className={`font-bold text-lg ${profile.isVerified ? 'text-green-300' : 'text-yellow-300'}`}>
                   {profile.isVerified ? 'Verified' : 'Pending Verification'}
                 </p>
               </div>
-              <div className="bg-white bg-opacity-10 rounded-xl p-4">
+              <div className="bg-white/10 rounded-xl p-4">
                 <p className="text-blue-200 text-xs font-semibold uppercase mb-1">Account Role</p>
                 <p className="text-white font-bold text-lg capitalize">{profile.role}</p>
               </div>

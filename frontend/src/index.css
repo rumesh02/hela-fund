@@ -71,21 +71,28 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
+
+/* Subtle scrollbar for admin table areas */
+.scrollbar-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+.scrollbar-subtle::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #a855f7, #06b6d4);
-  border-radius: 5px;
+.scrollbar-subtle::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #9333ea, #0891b2);
+.scrollbar-subtle::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
