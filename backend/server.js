@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import morgan from 'morgan';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.routes.js';
@@ -10,9 +10,6 @@ import requestRoutes from './routes/request.routes.js';
 import contributionRoutes from './routes/contribution.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
-
-// Load environment variables
-dotenv.config();
 
 // Initialize Express app
 const app = express();

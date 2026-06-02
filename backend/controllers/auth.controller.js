@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import User from '../models/User.model.js';
 import { checkRoleAccess, isValidRole } from '../utils/validators.js';
+import { uploadToS3 } from '../utils/s3.js';
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -52,14 +53,22 @@ export const register = async (req, res) => {
     };
 
     if (role === 'requester') {
-      // Requester-specific fields
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: 'Student ID image is required'
+        });
+      }
+
+      const studentIdImageUrl = await uploadToS3(req.file);
+
       userData = {
         ...userData,
         fullName: otherFields.fullName,
         university: otherFields.university,
         faculty: otherFields.faculty,
         studentId: otherFields.studentId,
-        studentIdImage: otherFields.studentIdImage, // Handle file upload separately
+        studentIdImage: studentIdImageUrl,
         mobile: otherFields.mobile
       };
     } else if (role === 'supporter') {
