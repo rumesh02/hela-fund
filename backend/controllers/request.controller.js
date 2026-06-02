@@ -1,4 +1,5 @@
 import Request from '../models/Request.model.js';
+import { uploadToS3 } from '../utils/s3.js';
 
 // @desc    Get all requests
 // @route   GET /api/requests
@@ -82,18 +83,8 @@ export const getRequestById = async (req, res) => {
 // @access  Private
 export const createRequest = async (req, res) => {
   try {
-    const { 
-      title, 
-      description, 
-      category, 
-      urgency, 
-      itemLostLocation, 
-      amount, 
-      proofDocument,
-      anonymous 
-    } = req.body;
+    const { title, description, category, urgency, itemLostLocation, amount, anonymous } = req.body;
 
-    // Validate required fields
     if (!title || !description || !category || !urgency) {
       return res.status(400).json({
         success: false,
@@ -101,7 +92,6 @@ export const createRequest = async (req, res) => {
       });
     }
 
-    // Validate conditional fields based on category
     if (category === 'Lost Item' && !itemLostLocation) {
       return res.status(400).json({
         success: false,
@@ -116,17 +106,15 @@ export const createRequest = async (req, res) => {
       });
     }
 
-    // Prepare request data
     const requestData = {
       title,
       description,
       category,
       urgency,
       requester: req.user._id,
-      anonymous: anonymous || false
+      anonymous: anonymous === 'true' || anonymous === true,
     };
 
-    // Add conditional fields only if category matches
     if (category === 'Lost Item') {
       requestData.itemLostLocation = itemLostLocation;
     }
@@ -135,9 +123,12 @@ export const createRequest = async (req, res) => {
       requestData.amount = amount;
     }
 
-    // Add proof document if provided
-    if (proofDocument) {
-      requestData.proofDocument = proofDocument;
+    if (req.file) {
+      const proofUrl = await uploadToS3(req.file, 'proof-documents');
+      requestData.proofDocument = {
+        name: req.file.originalname,
+        url: proofUrl,
+      };
     }
 
     const request = await Request.create(requestData);

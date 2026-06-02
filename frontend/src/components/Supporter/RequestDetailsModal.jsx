@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { X, MapPin, Calendar, User, AlertCircle, Banknote, Heart } from 'lucide-react';
+import { X, MapPin, Calendar, User, AlertCircle, Banknote, Heart, FileText, ExternalLink } from 'lucide-react';
+
+const isImageFile = (name = '') => /\.(jpe?g|png|gif|webp|bmp)$/i.test(name);
+const isPdfFile = (name = '') => /\.pdf$/i.test(name);
 import api from '../../utils/api';
 
 const RequestDetailsModal = ({ request, onClose, onSupportSuccess }) => {
@@ -192,6 +195,62 @@ const RequestDetailsModal = ({ request, onClose, onSupportSuccess }) => {
               <span className="text-sm font-medium text-blue-800">Category: {request.category}</span>
             </div>
           </div>
+
+          {/* Proof Document */}
+          {request.proofDocument?.url ? (
+            <div>
+              <h3 className="text-lg font-bold text-gray-800 mb-3">Proof / Documentation</h3>
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                {isImageFile(request.proofDocument.name) ? (
+                  <div>
+                    <img
+                      src={request.proofDocument.url}
+                      alt={request.proofDocument.name}
+                      className="w-full max-h-72 object-contain bg-gray-50"
+                    />
+                    <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText size={14} className="text-gray-500 flex-shrink-0" />
+                        <span className="text-xs text-gray-600 truncate">{request.proofDocument.name}</span>
+                      </div>
+                      <a
+                        href={request.proofDocument.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-xs font-semibold text-teal-600 hover:text-teal-800 transition flex-shrink-0 ml-3"
+                      >
+                        <ExternalLink size={13} />
+                        Open full size
+                      </a>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between px-4 py-4 bg-gray-50">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="bg-teal-100 p-2 rounded-lg flex-shrink-0">
+                        <FileText size={18} className="text-teal-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{request.proofDocument.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {isPdfFile(request.proofDocument.name) ? 'PDF Document' : 'Document'}
+                        </p>
+                      </div>
+                    </div>
+                    <a
+                      href={request.proofDocument.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white text-xs font-semibold rounded-lg hover:bg-teal-700 transition flex-shrink-0 ml-3"
+                    >
+                      <ExternalLink size={13} />
+                      View Document
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : null}
 
           {/* Additional Info */}
           <div className="border-t border-gray-200 pt-6">

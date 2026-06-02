@@ -32,48 +32,39 @@ const CreateRequest = () => {
     setError('');
     
     try {
-      // Get token from localStorage or your auth context
       const token = localStorage.getItem('token');
-      
+
       if (!token) {
         setError('Please login to create a request');
         setLoading(false);
         return;
       }
 
-      // Prepare data based on category
-      const requestData = {
-        title: formData.title,
-        description: formData.description,
-        category: formData.category,
-        urgency: formData.urgency,
-        anonymous: formData.anonymous,
-      };
+      const body = new FormData();
+      body.append('title', formData.title);
+      body.append('description', formData.description);
+      body.append('category', formData.category);
+      body.append('urgency', formData.urgency);
+      body.append('anonymous', formData.anonymous);
 
-      // Add conditional fields
       if (formData.category === 'Lost Item') {
-        requestData.itemLostLocation = formData.itemLostLocation;
+        body.append('itemLostLocation', formData.itemLostLocation);
       }
 
       if (formData.category === 'Micro-Funding') {
-        requestData.amount = parseFloat(formData.amount);
+        body.append('amount', formData.amount);
       }
 
-      // Add proof document if provided (placeholder for now)
       if (formData.proof) {
-        requestData.proofDocument = {
-          name: formData.proof.name,
-          url: 'placeholder_url' // Will be updated when file upload is implemented
-        };
+        body.append('proof', formData.proof);
       }
 
       const response = await fetch('http://localhost:5000/api/requests', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(requestData)
+        body,
       });
 
       const data = await response.json();
