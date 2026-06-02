@@ -32,7 +32,7 @@ const Sidebar = () => {
     { path: '/supporter/my-contributions', icon: Heart, label: 'My Contributions' },
     { path: '/supporter/messages', icon: MessageSquare, label: 'Messages' },
     { path: '/supporter/profile', icon: User, label: 'Profile' },
-    { path: '/supporter/settings', icon: Settings, label: 'Settings' },
+    // { path: '/supporter/settings', icon: Settings, label: 'Settings' },
   ];
 
   const toggleSidebar = () => {

@@ -32,7 +32,7 @@ const Sidebar = () => {
     { path: '/requester/my-requests', icon: FileText, label: 'My Requests' },
     { path: '/requester/messages', icon: MessageSquare, label: 'Messages' },
     { path: '/requester/profile', icon: User, label: 'Profile' },
-    { path: '/requester/settings', icon: Settings, label: 'Settings' },
+    // { path: '/requester/settings', icon: Settings, label: 'Settings' },
   ];
 
   const toggleSidebar = () => {
