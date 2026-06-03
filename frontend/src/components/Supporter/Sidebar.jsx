@@ -1,16 +1,17 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Search, 
-  Heart, 
-  MessageSquare, 
-  User, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Search,
+  Heart,
+  MessageSquare,
+  User,
+  Settings,
   LogOut,
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  MapPin
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -30,6 +31,7 @@ const Sidebar = () => {
     { path: '/supporter/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/supporter/browse-requests', icon: Search, label: 'Browse Requests' },
     { path: '/supporter/my-contributions', icon: Heart, label: 'My Contributions' },
+    { path: '/supporter/lost-and-found', icon: MapPin, label: 'Lost & Found' },
     { path: '/supporter/messages', icon: MessageSquare, label: 'Messages' },
     { path: '/supporter/profile', icon: User, label: 'Profile' },
     // { path: '/supporter/settings', icon: Settings, label: 'Settings' },

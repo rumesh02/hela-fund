@@ -1,17 +1,24 @@
 import { useState } from 'react';
-import { X, MapPin, Calendar, User, AlertCircle, Banknote, Heart, FileText, ExternalLink } from 'lucide-react';
+import { X, MapPin, Calendar, User, AlertCircle, Banknote, Heart, FileText, ExternalLink, Phone } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../utils/api';
 
 const isImageFile = (name = '') => /\.(jpe?g|png|gif|webp|bmp)$/i.test(name);
 const isPdfFile = (name = '') => /\.pdf$/i.test(name);
-import api from '../../utils/api';
+
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const RequestDetailsModal = ({ request, onClose, onSupportSuccess }) => {
   if (!request) return null;
 
+  const { user } = useAuth();
+
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [supportAmount, setSupportAmount] = useState('');
+  const [phone, setPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null); // null | 'processing' | 'success' | 'cancelled' | 'error'
 
   const getUrgencyColor = (urgency) => {
     const colors = {
@@ -44,38 +51,108 @@ const RequestDetailsModal = ({ request, onClose, onSupportSuccess }) => {
 
   const handleOpenSupport = () => {
     setSubmitError(null);
+    setPaymentStatus(null);
     setSupportAmount('');
+    setPhone('');
     setIsSupportOpen(true);
   };
 
   const handleSubmitSupport = async () => {
     const numericAmount = Number(supportAmount);
-    if (!numericAmount || Number.isNaN(numericAmount) || numericAmount <= 0) {
+    if (!numericAmount || isNaN(numericAmount) || numericAmount <= 0) {
       setSubmitError('Enter a valid amount');
       return;
     }
-
     if (remainingAmount > 0 && numericAmount > remainingAmount) {
       setSubmitError('Amount exceeds remaining goal');
+      return;
+    }
+    const trimmedPhone = phone.trim();
+    if (!trimmedPhone || trimmedPhone.length < 9) {
+      setSubmitError('Enter a valid phone number');
+      return;
+    }
+
+    if (!window.payhere) {
+      setSubmitError('Payment system is not loaded. Please refresh the page and try again.');
       return;
     }
 
     try {
       setIsSubmitting(true);
       setSubmitError(null);
-      await api.post('/contributions', {
+      setPaymentStatus('processing');
+
+      // Step 1: Get hash and order details from backend
+      const response = await api.post('/payments/initiate', {
         amount: numericAmount,
         requestId: request._id,
-        paymentMethod: 'card'
+        phone: trimmedPhone
       });
-      if (onSupportSuccess) {
-        onSupportSuccess({ requestId: request._id, amount: numericAmount });
-      }
-      setIsSupportOpen(false);
+
+      const { merchantId, orderId, amount, currency, hash, firstName, lastName, email, itemsDescription } =
+        response.data;
+
+      // Step 2: Register PayHere callbacks
+      window.payhere.onCompleted = async function (payherePaymentId) {
+        try {
+          // Finalize payment on backend (handles sandbox where notify_url isn't reachable)
+          await api.post('/payments/complete', { orderId, payherePaymentId });
+
+          setPaymentStatus('success');
+          if (onSupportSuccess) {
+            onSupportSuccess({ requestId: request._id, amount: numericAmount });
+          }
+          setTimeout(() => {
+            setIsSupportOpen(false);
+            setPaymentStatus(null);
+          }, 2000);
+        } catch (err) {
+          setSubmitError('Payment was processed but we could not record it. Please contact support with order ID: ' + orderId);
+          setPaymentStatus('error');
+        } finally {
+          setIsSubmitting(false);
+        }
+      };
+
+      window.payhere.onDismissed = function () {
+        setIsSubmitting(false);
+        setPaymentStatus('cancelled');
+        setSubmitError('Payment was cancelled. You can try again.');
+      };
+
+      window.payhere.onError = function (error) {
+        setIsSubmitting(false);
+        setPaymentStatus('error');
+        setSubmitError('Payment error: ' + error);
+      };
+
+      // Step 3: Launch PayHere popup
+      const payment = {
+        sandbox: true,
+        merchant_id: merchantId,
+        return_url: window.location.href,
+        cancel_url: window.location.href,
+        notify_url: `${BACKEND_URL}/payments/notify`,
+        order_id: orderId,
+        items: itemsDescription,
+        amount,
+        currency,
+        hash,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone: trimmedPhone,
+        address: 'Sri Lanka',
+        city: 'Colombo',
+        country: 'Sri Lanka'
+      };
+
+      window.payhere.startPayment(payment);
     } catch (error) {
-      setSubmitError(error.message || 'Failed to complete transaction');
-    } finally {
       setIsSubmitting(false);
+      setPaymentStatus('error');
+      setSubmitError(error.message || 'Failed to initiate payment');
     }
   };
 
@@ -295,65 +372,112 @@ const RequestDetailsModal = ({ request, onClose, onSupportSuccess }) => {
         </div>
       </div>
 
+      {/* Payment Dialog */}
       {isSupportOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Support Amount</h3>
-                <p className="text-sm text-gray-600">Enter the amount you want to contribute</p>
+                <h3 className="text-lg font-bold text-gray-900">Support this Request</h3>
+                <p className="text-sm text-gray-600">Secure payment via PayHere</p>
               </div>
               <button
-                onClick={() => setIsSupportOpen(false)}
+                onClick={() => { setIsSupportOpen(false); setPaymentStatus(null); }}
                 className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition"
+                disabled={isSubmitting && paymentStatus === 'processing'}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600">Required amount</p>
-              <p className="text-xl font-bold text-gray-900">
-                {request.currency} {request.amount?.toLocaleString?.() || request.amount}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Remaining: {request.currency} {remainingAmount.toLocaleString()}
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Contribution Amount</label>
-              <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-                <span className="px-3 text-gray-500">{request.currency}</span>
-                <input
-                  type="number"
-                  min="1"
-                  max={remainingAmount || undefined}
-                  value={supportAmount}
-                  onChange={(event) => setSupportAmount(event.target.value)}
-                  className="w-full px-3 py-2 focus:outline-none"
-                  placeholder="0"
-                />
+            {/* Success state */}
+            {paymentStatus === 'success' && (
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                <div className="text-3xl mb-2">✅</div>
+                <p className="text-green-800 font-semibold">Payment successful!</p>
+                <p className="text-green-600 text-sm mt-1">Thank you for your contribution.</p>
               </div>
-              {submitError && <p className="text-sm text-red-600 mt-2">{submitError}</p>}
-            </div>
+            )}
 
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setIsSupportOpen(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmitSupport}
-                className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Processing...' : 'Complete Transaction'}
-              </button>
-            </div>
+            {/* Normal form */}
+            {paymentStatus !== 'success' && (
+              <>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-600">Required amount</p>
+                  <p className="text-xl font-bold text-gray-900">
+                    {request.currency} {request.amount?.toLocaleString?.() || request.amount}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Remaining: {request.currency} {remainingAmount.toLocaleString()}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Contribution Amount</label>
+                  <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                    <span className="px-3 py-2 bg-gray-50 text-gray-500 border-r border-gray-300">{request.currency}</span>
+                    <input
+                      type="number"
+                      min="1"
+                      max={remainingAmount || undefined}
+                      value={supportAmount}
+                      onChange={(e) => setSupportAmount(e.target.value)}
+                      className="w-full px-3 py-2 focus:outline-none"
+                      placeholder="0"
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Phone size={14} className="inline mr-1" />
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="e.g. 0771234567"
+                    disabled={isSubmitting}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Required for payment processing</p>
+                </div>
+
+                {/* Payer info summary */}
+                <div className="bg-teal-50 border border-teal-100 rounded-lg px-4 py-3 text-sm text-gray-700 space-y-1">
+                  <p><span className="font-medium">Name:</span> {user?.name || 'Supporter'}</p>
+                  <p><span className="font-medium">Email:</span> {user?.email}</p>
+                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                    🔒 Payments secured by PayHere sandbox
+                  </p>
+                </div>
+
+                {submitError && (
+                  <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                    {submitError}
+                  </p>
+                )}
+
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => { setIsSupportOpen(false); setPaymentStatus(null); }}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                    disabled={isSubmitting && paymentStatus === 'processing'}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSubmitSupport}
+                    className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition disabled:opacity-60"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Opening PayHere...' : 'Complete Transaction'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

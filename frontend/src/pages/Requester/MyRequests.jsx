@@ -1,4 +1,4 @@
-import { Eye, Edit, Trash2, Filter, X, CheckCircle, Clock, FileText, ExternalLink } from 'lucide-react';
+import { Eye, Edit, Trash2, Filter, X, CheckCircle, Clock, FileText, ExternalLink, Heart, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
@@ -15,6 +15,8 @@ const MyRequests = () => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [requestContributions, setRequestContributions] = useState([]);
+  const [contributionsLoading, setContributionsLoading] = useState(false);
   const [editFormData, setEditFormData] = useState({
     title: '',
     category: '',
@@ -49,9 +51,21 @@ const MyRequests = () => {
   }, []);
 
   // Handler for viewing request details
-  const handleViewDetails = (request) => {
+  const handleViewDetails = async (request) => {
     setSelectedRequest(request);
     setShowDetailsModal(true);
+    setRequestContributions([]);
+    setContributionsLoading(true);
+    try {
+      const response = await api.get(`/contributions/request/${request._id}`);
+      if (response.success) {
+        setRequestContributions(response.data);
+      }
+    } catch (err) {
+      console.error('Error fetching contributions:', err);
+    } finally {
+      setContributionsLoading(false);
+    }
   };
 
   // Handler for editing request
@@ -364,7 +378,7 @@ const MyRequests = () => {
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex justify-between items-center">
               <h2 className="text-2xl font-bold">Request Details</h2>
               <button
-                onClick={() => setShowDetailsModal(false)}
+                onClick={() => { setShowDetailsModal(false); setRequestContributions([]); }}
                 className="p-2 hover:bg-blue-800 rounded-lg transition-all"
               >
                 <X size={24} />
@@ -497,10 +511,62 @@ const MyRequests = () => {
                   )}
                 </div>
               </div>
+
+              {/* Contributions Section */}
+              <div>
+                <label className="text-sm font-semibold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <Heart size={14} className="text-rose-500" />
+                  Contributions Received
+                </label>
+                <div className="mt-2">
+                  {contributionsLoading ? (
+                    <div className="flex items-center gap-2 py-4 text-gray-500 text-sm">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      Loading contributions...
+                    </div>
+                  ) : requestContributions.length === 0 ? (
+                    <p className="text-sm text-gray-500 italic py-2">No contributions received yet.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {selectedRequest.category === 'Micro-Funding' && (
+                        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-3">
+                          <span className="text-sm font-semibold text-blue-700">Total Raised</span>
+                          <span className="text-lg font-bold text-blue-700">
+                            Rs. {requestContributions.reduce((sum, c) => sum + (c.amount || 0), 0).toLocaleString()}
+                          </span>
+                        </div>
+                      )}
+                      {requestContributions.map((contribution, index) => (
+                        <div key={contribution._id || index} className="flex items-start gap-3 bg-gray-50 border border-gray-200 rounded-xl p-3">
+                          <div className="bg-blue-100 p-1.5 rounded-full flex-shrink-0 mt-0.5">
+                            <User size={14} className="text-blue-600" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-sm font-semibold text-gray-900 truncate">
+                                {contribution.isAnonymous ? 'Anonymous' : (contribution.supporter?.name || 'Anonymous')}
+                              </span>
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                {contribution.amount > 0 && (
+                                  <span className="text-sm font-bold text-emerald-600">Rs. {contribution.amount?.toLocaleString()}</span>
+                                )}
+                                <span className="text-xs text-gray-400">{new Date(contribution.createdAt).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                            {contribution.message && (
+                              <p className="text-xs text-gray-500 mt-1 italic">"{contribution.message}"</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="p-6 bg-gray-50 flex justify-end">
               <button
-                onClick={() => setShowDetailsModal(false)}
+                onClick={() => { setShowDetailsModal(false); setRequestContributions([]); }}
                 className="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all"
               >
                 Close

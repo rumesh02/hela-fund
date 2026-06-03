@@ -1,16 +1,17 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Plus, 
-  FileText, 
-  MessageSquare, 
-  User, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Plus,
+  FileText,
+  MessageSquare,
+  User,
+  Settings,
   LogOut,
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  MapPin
 } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
@@ -30,6 +31,7 @@ const Sidebar = () => {
     { path: '/requester/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/requester/create-request', icon: Plus, label: 'Create Request' },
     { path: '/requester/my-requests', icon: FileText, label: 'My Requests' },
+    { path: '/requester/lost-and-found', icon: MapPin, label: 'Lost & Found' },
     { path: '/requester/messages', icon: MessageSquare, label: 'Messages' },
     { path: '/requester/profile', icon: User, label: 'Profile' },
     // { path: '/requester/settings', icon: Settings, label: 'Settings' },
