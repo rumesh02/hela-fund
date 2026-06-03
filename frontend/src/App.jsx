@@ -26,6 +26,7 @@ import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import ViewUsers from './pages/Admin/ViewUsers';
 import VerifyRequests from './pages/Admin/VerifyRequests';
+import Reports from './pages/Admin/Reports';
 
 // Supporter Imports
 import SupporterLayout from './layouts/SupporterLayout';
@@ -88,6 +89,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="users" element={<ViewUsers />} />
           <Route path="verify-requests" element={<VerifyRequests />} />
+          <Route path="reports" element={<Reports />} />
         </Route>
 
         {/* Catch all - redirect to landing */}

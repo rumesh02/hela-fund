@@ -12,6 +12,7 @@ import {
   IdCard,
   X,
 } from 'lucide-react';
+import UserDownloadButton from '../../components/Admin/UserDownloadButton';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -106,14 +107,17 @@ const ViewUsers = () => {
           <h1 className="text-3xl font-bold text-gray-800">View Users</h1>
           <p className="text-gray-500 mt-1">Manage and verify registered users</p>
         </div>
-        <button
-          onClick={fetchUsers}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          <UserDownloadButton users={users} />
+          <button
+            onClick={fetchUsers}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Stat cards */}
