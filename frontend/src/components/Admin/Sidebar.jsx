@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Users,
   ClipboardCheck,
+  BarChart3,
   LogOut,
   Menu,
   X,
@@ -24,9 +25,10 @@ const AdminSidebar = () => {
   };
 
   const menuItems = [
-    { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/admin/users', icon: Users, label: 'View Users' },
-    { path: '/admin/verify-requests', icon: ClipboardCheck, label: 'Verify Requests' },
+    { path: '/admin/dashboard',       icon: LayoutDashboard, label: 'Dashboard'       },
+    { path: '/admin/users',           icon: Users,           label: 'View Users'      },
+    { path: '/admin/verify-requests', icon: ClipboardCheck,  label: 'Verify Requests' },
+    { path: '/admin/reports',         icon: BarChart3,       label: 'Reports'         },
   ];
 
   return (
