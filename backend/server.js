@@ -9,6 +9,7 @@ import userRoutes from './routes/user.routes.js';
 import requestRoutes from './routes/request.routes.js';
 import contributionRoutes from './routes/contribution.routes.js';
 import messageRoutes from './routes/message.routes.js';
+import paymentRoutes from './routes/payment.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
 
 // Initialize Express app
@@ -43,6 +44,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/contributions', contributionRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
