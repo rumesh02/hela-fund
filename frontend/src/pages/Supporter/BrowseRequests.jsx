@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Search, Filter, Calendar, Eye, HandHeart, MapPin, AlertCircle, Clock, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Eye, HandHeart, MapPin, AlertCircle, Clock, Users, MessageCircle } from 'lucide-react';
 import RequestDetailsModal from '../../components/Supporter/RequestDetailsModal';
 import api from '../../utils/api';
 
 const BrowseRequests = () => {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('Micro-Funding');
   const [selectedUrgency, setSelectedUrgency] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
@@ -87,6 +89,16 @@ const BrowseRequests = () => {
         currentAmount: (prev.currentAmount || 0) + amount,
         contributionsCount: (prev.contributionsCount || 0) + 1
       };
+    });
+  };
+
+  const handleMessageRequester = (request) => {
+    navigate('/supporter/messages', {
+      state: {
+        userId: request.requester._id,
+        userName: request.requester.name || request.requester.fullName || 'User',
+        userAvatar: request.requester.avatar || null,
+      },
     });
   };
 
@@ -268,14 +280,25 @@ const BrowseRequests = () => {
                   </p>
                 </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={() => handleViewDetails(request)}
-                  className="w-full flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
-                >
-                  <Eye size={18} />
-                  <span>View Details & Support</span>
-                </button>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleViewDetails(request)}
+                    className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
+                  >
+                    <Eye size={18} />
+                    <span>View & Support</span>
+                  </button>
+                  {!request.anonymous && request.requester?._id && (
+                    <button
+                      onClick={() => handleMessageRequester(request)}
+                      title="Message requester"
+                      className="p-2.5 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition"
+                    >
+                      <MessageCircle size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -335,14 +358,25 @@ const BrowseRequests = () => {
                   </p>
                 </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={() => handleViewDetails(request)}
-                  className="w-full flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
-                >
-                  <Eye size={18} />
-                  <span>View Full Details</span>
-                </button>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleViewDetails(request)}
+                    className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
+                  >
+                    <Eye size={18} />
+                    <span>View Full Details</span>
+                  </button>
+                  {!request.anonymous && request.requester?._id && (
+                    <button
+                      onClick={() => handleMessageRequester(request)}
+                      title="Message requester"
+                      className="p-2.5 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition"
+                    >
+                      <MessageCircle size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -397,14 +431,25 @@ const BrowseRequests = () => {
                   </div>
                 </div>
 
-                {/* Action Button */}
-                <button
-                  onClick={() => handleViewDetails(request)}
-                  className="w-full flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
-                >
-                  <Eye size={18} />
-                  <span>View Details & Help</span>
-                </button>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleViewDetails(request)}
+                    className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
+                  >
+                    <Eye size={18} />
+                    <span>View Details & Help</span>
+                  </button>
+                  {!request.anonymous && request.requester?._id && (
+                    <button
+                      onClick={() => handleMessageRequester(request)}
+                      title="Message requester"
+                      className="p-2.5 border border-teal-600 text-teal-600 rounded-lg hover:bg-teal-50 transition"
+                    >
+                      <MessageCircle size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
