@@ -1,91 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   MapPin, Search, X, Eye, Upload, Filter, Clock,
-  CheckCircle2, Calendar, Tag, Package, Phone, Mail,
-  User, Plus, Camera, AlertCircle
+  CheckCircle2, Calendar, Package, Phone, Mail,
+  User, Plus, Camera, ShieldCheck, MessageSquare,
+  FileText, ExternalLink, AlertCircle
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../utils/api';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const CATEGORIES = ['Bags & Accessories', 'Electronics', 'Documents & Cards', 'Personal Items', 'Jewellery', 'Keys', 'Clothing', 'Other'];
 
-const mockLostReports = [
-  {
-    id: '1',
-    title: 'Black Nike Backpack',
-    description: 'Black Nike backpack with a distinctive red keychain on the zipper. Contains a silver MacBook laptop, blue notebooks, and a grey pencil case.',
-    location: 'Main Library',
-    date: '2026-05-28',
-    status: 'searching',
-    urgency: 'High',
-    category: 'Bags & Accessories',
-    reporterName: 'Rumesh T.',
-    reporterContact: 'rumesh@university.lk',
-  },
-  {
-    id: '2',
-    title: 'University ID Card',
-    description: 'Student ID card. Name: Rumesh Tharaka, ID: S20200312. Lost between the cafeteria and the engineering block.',
-    location: 'Cafeteria Area',
-    date: '2026-05-30',
-    status: 'searching',
-    urgency: 'High',
-    category: 'Documents & Cards',
-    reporterName: 'Rumesh T.',
-    reporterContact: 'rumesh@university.lk',
-  },
-  {
-    id: '3',
-    title: 'Blue Hydro Flask',
-    description: 'Blue 32oz Hydro Flask water bottle with a small dent on the bottom. Has a university sticker on the side.',
-    location: 'Sports Complex',
-    date: '2026-06-01',
-    status: 'matched',
-    urgency: 'Low',
-    category: 'Personal Items',
-    reporterName: 'Kavya S.',
-    reporterContact: 'kavya@university.lk',
-  },
-  {
-    id: '4',
-    title: 'Gold Bracelet with Heart Charm',
-    description: 'Gold bracelet with a small heart charm. Has initials "N.S." engraved on the inside clasp. Very sentimental value.',
-    location: 'Canteen Entrance',
-    date: '2026-06-02',
-    status: 'searching',
-    urgency: 'High',
-    category: 'Jewellery',
-    reporterName: 'Nisha S.',
-    reporterContact: '077-345-6789',
-  },
-  {
-    id: '5',
-    title: 'Car Keys with Yellow Keychain',
-    description: 'Toyota car keys with a large yellow rubber duck keychain attached. Lost near the main university parking area.',
-    location: 'University Parking',
-    date: '2026-06-02',
-    status: 'searching',
-    urgency: 'Medium',
-    category: 'Keys',
-    reporterName: 'Thilan D.',
-    reporterContact: '071-234-5678',
-  },
-  {
-    id: '6',
-    title: 'Casio Scientific Calculator',
-    description: 'Casio FX-991EX scientific calculator with a small scratch on the display. Name written on the back: "A. Perera".',
-    location: 'Engineering Block Room 204',
-    date: '2026-05-25',
-    status: 'searching',
-    urgency: 'Medium',
-    category: 'Electronics',
-    reporterName: 'Amara P.',
-    reporterContact: 'amara@university.lk',
-  },
-];
+const isImageFile = (name = '') => /\.(jpe?g|png|gif|webp|bmp)$/i.test(name);
+const isPdfFile = (name = '') => /\.pdf$/i.test(name);
 
 const getStatusConfig = (status) => {
   switch (status) {
-    case 'searching': return { label: 'Searching', color: 'bg-amber-100 text-amber-700 border-amber-200', Icon: Clock };
-    case 'matched': return { label: 'Matched', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', Icon: CheckCircle2 };
+    case 'active': return { label: 'Searching', color: 'bg-amber-100 text-amber-700 border-amber-200', Icon: Clock };
+    case 'completed': return { label: 'Found', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', Icon: CheckCircle2 };
+    case 'Inactive':
+    case 'cancelled': return { label: 'Closed', color: 'bg-gray-100 text-gray-500 border-gray-200', Icon: X };
+    case 'expired': return { label: 'Expired', color: 'bg-rose-100 text-rose-600 border-rose-200', Icon: AlertCircle };
     default: return { label: status, color: 'bg-gray-100 text-gray-500 border-gray-200', Icon: Clock };
   }
 };
@@ -99,27 +36,23 @@ const getUrgencyStyle = (urgency) => {
   }
 };
 
-const CategoryIcon = ({ category }) => {
-  const icons = {
-    'Bags & Accessories': '🎒',
-    'Electronics': '📱',
-    'Documents & Cards': '🪪',
-    'Personal Items': '🔑',
-    'Jewellery': '💍',
-    'Keys': '🔑',
-    'Clothing': '👕',
-    'Other': '📦',
-  };
-  return <span className="text-2xl">{icons[category] || '📦'}</span>;
+const formatDate = (value) => {
+  if (!value) return '—';
+  return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 const LostAndFound = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [activeTab, setActiveTab] = useState('browse');
-  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [urgencyFilter, setUrgencyFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showFoundModal, setShowFoundModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const [foundForm, setFoundForm] = useState({
@@ -129,26 +62,60 @@ const LostAndFound = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  const activeReports = mockLostReports.filter(r => r.status === 'searching');
-  const matchedReports = mockLostReports.filter(r => r.status === 'matched');
+  // Fetch all lost item requests
+  useEffect(() => {
+    const fetchLostReports = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.get(`/requests?category=${encodeURIComponent('Lost Item')}&limit=100`);
+        if (response.success) {
+          setReports(response.data);
+        } else {
+          setError(response.message || 'Failed to fetch lost item reports');
+        }
+      } catch (err) {
+        setError(err.message || 'An error occurred while fetching lost item reports');
+        console.error('Error fetching lost reports:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredReports = mockLostReports.filter((item) => {
-    const catMatch = categoryFilter === 'All' || item.category === categoryFilter;
+    fetchLostReports();
+  }, []);
+
+  // Prefill the supporter's contact info into the found form
+  useEffect(() => {
+    if (user) {
+      setFoundForm((prev) => ({
+        ...prev,
+        contactName: prev.contactName || user.name || user.fullName || '',
+        contactEmail: prev.contactEmail || user.email || '',
+      }));
+    }
+  }, [user]);
+
+  const activeReports = reports.filter((r) => r.status === 'active');
+  const matchedReports = reports.filter((r) => r.status === 'completed');
+
+  const filteredReports = reports.filter((item) => {
     const urgMatch = urgencyFilter === 'all' || item.urgency === urgencyFilter;
     const searchMatch = !searchQuery ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.location.toLowerCase().includes(searchQuery.toLowerCase());
-    return catMatch && urgMatch && searchMatch;
+      (item.itemLostLocation || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return urgMatch && searchMatch;
   });
 
   const handleImageUpload = (files) => {
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
       if (!file.type.startsWith('image/')) return;
       const reader = new FileReader();
       reader.onload = (ev) => {
-        setUploadedImages(prev => [...prev, { name: file.name, url: ev.target.result }]);
+        setUploadedImages((prev) => [...prev, { name: file.name, url: ev.target.result, file }]);
       };
       reader.readAsDataURL(file);
     });
@@ -159,24 +126,71 @@ const LostAndFound = () => {
     handleImageUpload(e.dataTransfer.files);
   };
 
-  const handleFoundSubmit = (e) => {
+  const handleFoundSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
+    setSubmitError('');
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setSubmitError('Please login to report a found item.');
+        setSubmitting(false);
+        return;
+      }
+
+      const body = new FormData();
+      body.append('title', foundForm.title);
+      body.append('description', foundForm.description);
+      body.append('category', foundForm.category);
+      body.append('location', foundForm.location);
+      body.append('foundDate', foundForm.foundDate);
+      body.append('contactName', foundForm.contactName);
+      body.append('contactPhone', foundForm.contactPhone);
+      body.append('contactEmail', foundForm.contactEmail);
+      uploadedImages.forEach((img) => {
+        if (img.file) body.append('images', img.file);
+      });
+
+      const response = await fetch(`${API_URL}/founds`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body,
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setSubmitError(data.message || 'Failed to report found item.');
+      }
+    } catch (err) {
+      setSubmitError(err.message || 'An error occurred while submitting.');
+      console.error('Error submitting found item:', err);
+    } finally {
       setSubmitting(false);
-      setSubmitted(true);
-    }, 1500);
+    }
   };
 
+  // "I Found This" → open a chat with the requester
   const handleFoundThis = (item) => {
-    setSelectedItem(item);
-    setShowFoundModal(true);
-    setFoundForm(prev => ({ ...prev, title: item.title, category: item.category }));
+    if (item.anonymous || !item.requester?._id) return;
+    navigate('/supporter/messages', {
+      state: {
+        userId: item.requester._id,
+        userName: item.requester.name || item.requester.fullName || 'User',
+        userAvatar: item.requester.avatar || null,
+      },
+    });
   };
 
   const resetFoundForm = () => {
     setSubmitted(false);
-    setFoundForm({ title: '', description: '', location: '', foundDate: '', category: '', contactName: '', contactPhone: '', contactEmail: '' });
+    setSubmitError('');
+    setFoundForm({
+      title: '', description: '', location: '', foundDate: '', category: '',
+      contactName: user?.name || user?.fullName || '', contactPhone: '', contactEmail: user?.email || '',
+    });
     setUploadedImages([]);
   };
 
@@ -185,7 +199,7 @@ const LostAndFound = () => {
       {/* Header */}
       <div className="flex items-center justify-between bg-white border-l-4 border-teal-600 rounded-xl shadow-md p-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Lost & Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Lost &amp; Found</h1>
           <p className="text-gray-600 mt-1">Help reunite people with their lost belongings.</p>
         </div>
         <div className="flex items-center gap-3">
@@ -195,7 +209,7 @@ const LostAndFound = () => {
           </div>
           <div className="text-center bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2">
             <p className="text-xl font-bold text-emerald-600">{matchedReports.length}</p>
-            <p className="text-xs text-emerald-700 font-medium">Matched</p>
+            <p className="text-xs text-emerald-700 font-medium">Found</p>
           </div>
         </div>
       </div>
@@ -207,23 +221,19 @@ const LostAndFound = () => {
           <button
             onClick={() => setActiveTab('browse')}
             className={`flex-1 py-4 px-6 font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
-              activeTab === 'browse'
-                ? 'bg-teal-600 text-white'
-                : 'text-gray-600 hover:bg-teal-50'
+              activeTab === 'browse' ? 'bg-teal-600 text-white' : 'text-gray-600 hover:bg-teal-50'
             }`}
           >
             <Search size={15} />
             Browse Lost Reports
             <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
               activeTab === 'browse' ? 'bg-white/25 text-white' : 'bg-teal-100 text-teal-700'
-            }`}>{mockLostReports.length}</span>
+            }`}>{reports.length}</span>
           </button>
           <button
             onClick={() => { setActiveTab('report-found'); resetFoundForm(); }}
             className={`flex-1 py-4 px-6 font-semibold text-sm flex items-center justify-center gap-2 transition-all ${
-              activeTab === 'report-found'
-                ? 'bg-teal-600 text-white'
-                : 'text-gray-600 hover:bg-teal-50'
+              activeTab === 'report-found' ? 'bg-teal-600 text-white' : 'text-gray-600 hover:bg-teal-50'
             }`}
           >
             <Plus size={15} />
@@ -250,113 +260,108 @@ const LostAndFound = () => {
                 <div className="bg-teal-50 p-2 rounded-xl">
                   <Filter size={16} className="text-teal-600" />
                 </div>
-                {['All', ...CATEGORIES].map(cat => (
+                <span className="text-xs text-gray-400 font-medium">Urgency:</span>
+                {['all', 'High', 'Medium', 'Low'].map((u) => (
                   <button
-                    key={cat}
-                    onClick={() => setCategoryFilter(cat)}
+                    key={u}
+                    onClick={() => setUrgencyFilter(u)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                      categoryFilter === cat
-                        ? 'bg-teal-600 text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      urgencyFilter === u ? 'bg-teal-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}
                   >
-                    {cat}
+                    {u === 'all' ? 'All' : u}
                   </button>
                 ))}
-                <div className="ml-auto flex items-center gap-2">
-                  <span className="text-xs text-gray-400 font-medium">Urgency:</span>
-                  {['all', 'High', 'Medium', 'Low'].map(u => (
-                    <button
-                      key={u}
-                      onClick={() => setUrgencyFilter(u)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
-                        urgencyFilter === u
-                          ? 'bg-teal-600 text-white shadow-sm'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                    >
-                      {u === 'all' ? 'All' : u}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
 
-            {/* Results count */}
-            <p className="text-sm text-gray-500 font-medium">
-              Showing {filteredReports.length} of {mockLostReports.length} reports
-            </p>
-
-            {/* Cards Grid */}
-            {filteredReports.length === 0 ? (
-              <div className="text-center py-14">
-                <Package size={48} className="mx-auto mb-3 text-gray-300" />
-                <p className="font-semibold text-gray-400">No reports match your filters.</p>
+            {loading ? (
+              <div className="text-center py-16">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600" />
+                <p className="text-gray-600 font-medium mt-4">Loading lost item reports...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-16">
+                <AlertCircle size={44} className="mx-auto mb-3 text-rose-400" />
+                <p className="text-rose-600 font-medium">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="mt-4 bg-teal-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-teal-700 transition-all"
+                >
+                  Retry
+                </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredReports.map((item) => {
-                  const { label, color, Icon: StatusIcon } = getStatusConfig(item.status);
-                  return (
-                    <div key={item.id} className="border border-gray-200 rounded-2xl overflow-hidden hover:shadow-md hover:border-teal-200 transition-all flex flex-col">
-                      {/* Card image area */}
-                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 h-24 flex items-center justify-center border-b border-gray-100">
-                        <div className="flex flex-col items-center gap-1">
-                          <CategoryIcon category={item.category} />
-                          <span className="text-xs text-gray-400 font-medium">{item.category}</span>
-                        </div>
-                      </div>
+              <>
+                <p className="text-sm text-gray-500 font-medium">
+                  Showing {filteredReports.length} of {reports.length} reports
+                </p>
 
-                      <div className="p-4 flex-1 flex flex-col">
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <h3 className="font-bold text-gray-900 text-sm leading-tight">{item.title}</h3>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border flex-shrink-0 ${color}`}>
-                            <StatusIcon size={10} />
-                            {label}
-                          </span>
-                        </div>
-
-                        <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-1">{item.description}</p>
-
-                        <div className="space-y-1 mb-3">
-                          <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                            <MapPin size={12} className="text-gray-300" />
-                            {item.location}
+                {filteredReports.length === 0 ? (
+                  <div className="text-center py-14">
+                    <Package size={48} className="mx-auto mb-3 text-gray-300" />
+                    <p className="font-semibold text-gray-400">
+                      {reports.length === 0 ? 'No lost item reports yet.' : 'No reports match your filters.'}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredReports.map((item) => {
+                      const { label, color, Icon: StatusIcon } = getStatusConfig(item.status);
+                      const reporterName = item.anonymous ? 'Anonymous' : (item.requester?.name || item.requester?.fullName || 'Unknown');
+                      const canMessage = !item.anonymous && item.requester?._id;
+                      return (
+                        <div key={item._id} className="border border-gray-200 rounded-2xl p-4 hover:shadow-md hover:border-teal-200 transition-all flex flex-col">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h3 className="font-bold text-gray-900 text-sm leading-tight">{item.title}</h3>
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border flex-shrink-0 ${color}`}>
+                              <StatusIcon size={10} />
+                              {label}
+                            </span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                            <Calendar size={12} className="text-gray-300" />
-                            Lost on {item.date}
+
+                          <p className="text-xs text-gray-500 mb-3 line-clamp-2 flex-1">{item.description}</p>
+
+                          <div className="space-y-1 mb-3">
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <MapPin size={12} className="text-gray-300" />
+                              {item.itemLostLocation || 'Unknown location'}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                              <Calendar size={12} className="text-gray-300" />
+                              Reported {formatDate(item.createdAt)}
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="flex items-center justify-between gap-2 mb-3">
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getUrgencyStyle(item.urgency)}`}>
-                            {item.urgency} Priority
-                          </span>
-                          <span className="text-xs text-gray-400">by {item.reporterName}</span>
-                        </div>
+                          <div className="flex items-center justify-between gap-2 mb-3">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getUrgencyStyle(item.urgency)}`}>
+                              {item.urgency} Priority
+                            </span>
+                            <span className="text-xs text-gray-400">by {reporterName}</span>
+                          </div>
 
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => { setSelectedItem(item); setShowDetailsModal(true); }}
-                            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-all"
-                          >
-                            <Eye size={13} /> View Details
-                          </button>
-                          {item.status === 'searching' && (
+                          <div className="flex gap-2">
                             <button
-                              onClick={() => handleFoundThis(item)}
-                              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl text-xs font-bold hover:from-teal-700 hover:to-teal-800 transition-all shadow-sm"
+                              onClick={() => { setSelectedItem(item); setShowDetailsModal(true); }}
+                              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-all"
                             >
-                              <CheckCircle2 size={13} /> I Found This!
+                              <Eye size={13} /> View Details
                             </button>
-                          )}
+                            {item.status === 'active' && canMessage && (
+                              <button
+                                onClick={() => handleFoundThis(item)}
+                                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl text-xs font-bold hover:from-teal-700 hover:to-teal-800 transition-all shadow-sm"
+                              >
+                                <CheckCircle2 size={13} /> I Found This!
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -371,7 +376,7 @@ const LostAndFound = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Found Item Reported!</h3>
                 <p className="text-gray-500 text-sm max-w-sm mx-auto mb-6">
-                  Thank you! Your report has been submitted. We will match it against lost item reports and notify the owner.
+                  Thank you! Your report has been saved. We will match it against lost item reports and help notify the owner.
                 </p>
                 <button
                   onClick={resetFoundForm}
@@ -387,13 +392,20 @@ const LostAndFound = () => {
                   <p className="text-sm text-gray-500 mt-1">Help someone get their belonging back — fill in what you found and where.</p>
                 </div>
 
+                {submitError && (
+                  <div className="flex items-center gap-2 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl px-4 py-3">
+                    <AlertCircle size={16} className="flex-shrink-0" />
+                    {submitError}
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">Item Title *</label>
                   <input
                     type="text"
                     value={foundForm.title}
                     onChange={(e) => setFoundForm({ ...foundForm, title: e.target.value })}
-                    placeholder="e.g., Black Backpack, ID Card, Keys..."
+                    placeholder="Black Backpack, ID Card, Keys"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
                     required
                   />
@@ -409,7 +421,7 @@ const LostAndFound = () => {
                       required
                     >
                       <option value="">Select...</option>
-                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
@@ -430,7 +442,7 @@ const LostAndFound = () => {
                     value={foundForm.description}
                     onChange={(e) => setFoundForm({ ...foundForm, description: e.target.value })}
                     rows={4}
-                    placeholder="Describe what the item looks like — color, brand, contents, any distinguishing features..."
+                    placeholder="Describe what the item looks like - color, brand, contents, any distinguishing features"
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none"
                     required
                   />
@@ -444,7 +456,7 @@ const LostAndFound = () => {
                       type="text"
                       value={foundForm.location}
                       onChange={(e) => setFoundForm({ ...foundForm, location: e.target.value })}
-                      placeholder="e.g., Main Library Entrance, 2nd Floor"
+                      placeholder="Main Library Entrance, 2nd Floor"
                       className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none"
                       required
                     />
@@ -464,7 +476,7 @@ const LostAndFound = () => {
                     onDrop={handleDrop}
                   >
                     <Camera size={30} className="mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600 font-medium">Click to upload or drag & drop images</p>
+                    <p className="text-sm text-gray-600 font-medium">Click to upload or drag &amp; drop images</p>
                     <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP · Up to 5 images</p>
                     <input
                       id="found-image-upload"
@@ -483,7 +495,7 @@ const LostAndFound = () => {
                           <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
                           <button
                             type="button"
-                            onClick={() => setUploadedImages(prev => prev.filter((_, idx) => idx !== i))}
+                            onClick={() => setUploadedImages((prev) => prev.filter((_, idx) => idx !== i))}
                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             <X size={11} />
@@ -609,24 +621,89 @@ const LostAndFound = () => {
                   </span>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Category</p>
-                  <p className="text-sm text-gray-700 mt-1">{selectedItem.category}</p>
+                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Verification</p>
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                    selectedItem.isVerified ? 'text-emerald-700 bg-emerald-50' : 'text-amber-700 bg-amber-50'
+                  }`}>
+                    {selectedItem.isVerified ? <ShieldCheck size={12} /> : <Clock size={12} />}
+                    {selectedItem.isVerified ? 'Verified' : 'Pending'}
+                  </span>
                 </div>
               </div>
               <div>
                 <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Description</p>
-                <p className="text-gray-700 text-sm leading-relaxed">{selectedItem.description}</p>
+                <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{selectedItem.description}</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Last Seen Location</p>
-                  <p className="text-sm text-gray-700 flex items-center gap-1.5"><MapPin size={13} className="text-gray-400" /> {selectedItem.location}</p>
+                  <p className="text-sm text-gray-700 flex items-center gap-1.5"><MapPin size={13} className="text-gray-400" /> {selectedItem.itemLostLocation || '—'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Date Lost</p>
-                  <p className="text-sm text-gray-700">{selectedItem.date}</p>
+                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-1">Reported On</p>
+                  <p className="text-sm text-gray-700">{formatDate(selectedItem.createdAt)}</p>
                 </div>
               </div>
+
+              {/* Proof / Documentation */}
+              <div>
+                <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2">Proof / Documentation</p>
+                {selectedItem.proofDocument?.url ? (
+                  <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    {isImageFile(selectedItem.proofDocument.name) ? (
+                      <div>
+                        <img
+                          src={selectedItem.proofDocument.url}
+                          alt={selectedItem.proofDocument.name}
+                          className="w-full max-h-72 object-contain bg-gray-50"
+                        />
+                        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <FileText size={15} className="text-gray-500 flex-shrink-0" />
+                            <span className="text-xs text-gray-600 truncate">{selectedItem.proofDocument.name}</span>
+                          </div>
+                          <a
+                            href={selectedItem.proofDocument.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-xs font-semibold text-teal-600 hover:text-teal-800 transition flex-shrink-0 ml-3"
+                          >
+                            <ExternalLink size={13} />
+                            Open
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between px-4 py-4 bg-gray-50">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="bg-teal-100 p-2 rounded-lg flex-shrink-0">
+                            <FileText size={18} className="text-teal-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">{selectedItem.proofDocument.name}</p>
+                            <p className="text-xs text-gray-500">
+                              {isPdfFile(selectedItem.proofDocument.name) ? 'PDF Document' : 'Document'}
+                            </p>
+                          </div>
+                        </div>
+                        <a
+                          href={selectedItem.proofDocument.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-4 py-2 bg-teal-600 text-white text-xs font-semibold rounded-lg hover:bg-teal-700 transition flex-shrink-0 ml-3"
+                        >
+                          <ExternalLink size={13} />
+                          View Document
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">No proof document uploaded.</p>
+                )}
+              </div>
+
+              {/* Reporter */}
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                 <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider mb-2">Reported By</p>
                 <div className="flex items-center gap-3">
@@ -634,8 +711,12 @@ const LostAndFound = () => {
                     <User size={16} className="text-teal-600" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-800">{selectedItem.reporterName}</p>
-                    <p className="text-xs text-gray-500">{selectedItem.reporterContact}</p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {selectedItem.anonymous ? 'Anonymous' : (selectedItem.requester?.name || selectedItem.requester?.fullName || 'Unknown')}
+                    </p>
+                    {!selectedItem.anonymous && selectedItem.requester?.email && (
+                      <p className="text-xs text-gray-500">{selectedItem.requester.email}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -647,54 +728,14 @@ const LostAndFound = () => {
               >
                 Close
               </button>
-              {selectedItem.status === 'searching' && (
+              {selectedItem.status === 'active' && !selectedItem.anonymous && selectedItem.requester?._id && (
                 <button
                   onClick={() => { setShowDetailsModal(false); handleFoundThis(selectedItem); }}
-                  className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-teal-700 hover:to-teal-800 transition-all text-sm shadow-md"
+                  className="flex items-center gap-1.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-teal-700 hover:to-teal-800 transition-all text-sm shadow-md"
                 >
-                  I Found This Item!
+                  <MessageSquare size={15} /> I Found This — Message Owner
                 </button>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* "I Found This" Quick Modal */}
-      {showFoundModal && selectedItem && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
-            <div className="bg-gradient-to-r from-teal-600 to-teal-700 text-white p-5 flex justify-between items-center rounded-t-2xl">
-              <h2 className="text-xl font-bold">You Found This Item!</h2>
-              <button onClick={() => setShowFoundModal(false)} className="p-2 hover:bg-teal-800 rounded-lg transition-all">
-                <X size={20} />
-              </button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
-                <p className="text-sm font-bold text-teal-800">{selectedItem.title}</p>
-                <p className="text-xs text-teal-600 mt-1 flex items-center gap-1"><MapPin size={11} /> Originally lost at: {selectedItem.location}</p>
-              </div>
-              <p className="text-sm text-gray-600">
-                Great! Fill in the full found item form to submit your report. You can add photos and contact details so the owner can reach you.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setShowFoundModal(false)}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    setShowFoundModal(false);
-                    setActiveTab('report-found');
-                  }}
-                  className="flex-1 bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all shadow-md"
-                >
-                  Fill Found Item Form
-                </button>
-              </div>
             </div>
           </div>
         </div>
