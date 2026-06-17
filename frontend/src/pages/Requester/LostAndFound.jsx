@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   MapPin, Plus, X, Clock, CheckCircle2, Eye, Calendar,
   Package, Search, Filter, Sparkles, ShieldCheck, AlertCircle,
-  FileText, ExternalLink
+  FileText, ExternalLink, MessageSquare, Tag, ImageOff
 } from 'lucide-react';
 import api from '../../utils/api';
 
@@ -50,6 +50,13 @@ const LostAndFound = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
+  // AI match state
+  const [showMatchModal, setShowMatchModal] = useState(false);
+  const [matchItem, setMatchItem] = useState(null);
+  const [matchResults, setMatchResults] = useState([]);
+  const [matchLoading, setMatchLoading] = useState(false);
+  const [matchError, setMatchError] = useState(null);
+
   useEffect(() => {
     const fetchLostItems = async () => {
       try {
@@ -90,6 +97,48 @@ const LostAndFound = () => {
     : reports.filter((r) => r.status === statusFilter);
 
   const goToCreate = () => navigate('/requester/create-request');
+
+  // Run AI matching for a lost item against the reported found items
+  const searchWithAi = async (item) => {
+    setMatchItem(item);
+    setShowMatchModal(true);
+    setShowDetailsModal(false);
+    setMatchLoading(true);
+    setMatchError(null);
+    setMatchResults([]);
+    try {
+      const response = await api.post('/founds/match', { requestId: item._id });
+      if (response.success) {
+        setMatchResults(response.data);
+      } else {
+        setMatchError(response.message || 'AI search failed. Please try again.');
+      }
+    } catch (err) {
+      setMatchError(err.message || 'An error occurred while searching.');
+      console.error('AI match error:', err);
+    } finally {
+      setMatchLoading(false);
+    }
+  };
+
+  // Open a conversation with the supporter who reported a matching found item
+  const contactSupporter = (found) => {
+    if (!found.supporter?._id) return;
+    navigate('/requester/messages', {
+      state: {
+        userId: found.supporter._id,
+        userName: found.supporter.name || found.contactName || 'Supporter',
+        userAvatar: found.supporter.avatar || null,
+      },
+    });
+  };
+
+  // Visual treatment for the match confidence badge
+  const getMatchStyle = (percent) => {
+    if (percent >= 60) return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+    if (percent >= 45) return 'bg-amber-100 text-amber-700 border-amber-200';
+    return 'bg-gray-100 text-gray-600 border-gray-200';
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6 space-y-6">
@@ -139,16 +188,16 @@ const LostAndFound = () => {
         </div>
       </div>
 
-      {/* Find with AI — coming soon teaser */}
+      {/* Find with AI — live feature banner */}
       <div className="flex items-center gap-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-2xl shadow-md px-5 py-4">
         <div className="bg-white/15 p-2.5 rounded-xl border border-white/20">
           <Sparkles size={20} />
         </div>
         <div className="flex-1">
           <p className="font-bold text-sm">Find with AI</p>
-          <p className="text-violet-100 text-xs">Soon you'll be able to match your lost items against reported found items automatically.</p>
+          <p className="text-violet-100 text-xs">Tap <span className="font-semibold">Search with AI</span> on any lost item to automatically match it against reported found items.</p>
         </div>
-        <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">Coming Soon</span>
+        <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">Live</span>
       </div>
 
       {/* Main Panel */}
@@ -246,13 +295,22 @@ const LostAndFound = () => {
                           </span>
                         )}
                       </div>
-                      <button
-                        onClick={() => { setSelectedItem(item); setShowDetailsModal(true); }}
-                        className="flex items-center gap-1.5 text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
-                      >
-                        <Eye size={14} />
-                        Details
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => searchWithAi(item)}
+                          className="flex items-center gap-1.5 text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 px-3 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm"
+                        >
+                          <Sparkles size={14} />
+                          Search with AI
+                        </button>
+                        <button
+                          onClick={() => { setSelectedItem(item); setShowDetailsModal(true); }}
+                          className="flex items-center gap-1.5 text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-xl text-sm font-semibold transition-all"
+                        >
+                          <Eye size={14} />
+                          Details
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -371,10 +429,125 @@ const LostAndFound = () => {
                 )}
               </div>
             </div>
-            <div className="px-6 pb-6 flex justify-end">
+            <div className="px-6 pb-6 flex justify-end gap-2">
+              <button
+                onClick={() => searchWithAi(selectedItem)}
+                className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-sm"
+              >
+                <Sparkles size={16} />
+                Search with AI
+              </button>
               <button
                 onClick={() => setShowDetailsModal(false)}
-                className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all"
+                className="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* AI Match Results Modal */}
+      {showMatchModal && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-5 flex justify-between items-center rounded-t-2xl z-10">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <Sparkles size={22} className="flex-shrink-0" />
+                <div className="min-w-0">
+                  <h2 className="text-lg font-bold leading-tight">AI Match Results</h2>
+                  <p className="text-violet-100 text-xs truncate">for "{matchItem?.title}"</p>
+                </div>
+              </div>
+              <button onClick={() => setShowMatchModal(false)} className="p-2 hover:bg-white/15 rounded-lg transition-all flex-shrink-0">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6">
+              {matchLoading ? (
+                <div className="text-center py-16">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600" />
+                  <p className="text-gray-600 font-medium mt-4">Scanning reported found items…</p>
+                  <p className="text-gray-400 text-xs mt-1">Matching your description against found reports.</p>
+                </div>
+              ) : matchError ? (
+                <div className="text-center py-14">
+                  <AlertCircle size={44} className="mx-auto mb-3 text-rose-400" />
+                  <p className="text-rose-600 font-medium">{matchError}</p>
+                  <button
+                    onClick={() => searchWithAi(matchItem)}
+                    className="mt-4 bg-violet-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-violet-700 transition-all"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : matchResults.length === 0 ? (
+                <div className="text-center py-14">
+                  <Search size={48} className="mx-auto mb-3 text-gray-300" />
+                  <p className="font-semibold text-gray-500">No matching found items yet.</p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    We couldn't find a reported found item that matches your description. Check back later as new items are reported.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-500">
+                    Found <span className="font-semibold text-gray-700">{matchResults.length}</span> possible {matchResults.length === 1 ? 'match' : 'matches'}, sorted by confidence.
+                  </p>
+                  {matchResults.map((found) => {
+                    const image = found.images?.find((img) => img?.url);
+                    return (
+                      <div
+                        key={found._id}
+                        className="border border-gray-200 rounded-2xl p-4 hover:shadow-md hover:border-violet-200 transition-all flex gap-4"
+                      >
+                        <div className="w-20 h-20 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {image ? (
+                            <img src={image.url} alt={found.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <ImageOff size={22} className="text-gray-300" />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h3 className="font-bold text-gray-900 text-base leading-tight truncate">{found.title}</h3>
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border flex-shrink-0 ${getMatchStyle(found.matchPercent)}`}>
+                              <Sparkles size={11} />
+                              {found.matchPercent}% match
+                            </span>
+                          </div>
+
+                          <p className="text-gray-500 text-sm line-clamp-2 mb-2">{found.description}</p>
+
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400 mb-3">
+                            <span className="flex items-center gap-1"><Tag size={12} /> {found.category}</span>
+                            <span className="flex items-center gap-1"><MapPin size={12} /> {found.location}</span>
+                            <span className="flex items-center gap-1"><Calendar size={12} /> Found {formatDate(found.foundDate)}</span>
+                          </div>
+
+                          <button
+                            onClick={() => contactSupporter(found)}
+                            disabled={!found.supporter?._id}
+                            className="flex items-center gap-1.5 text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-3 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <MessageSquare size={14} />
+                            Contact Supporter
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 pb-6 flex justify-end">
+              <button
+                onClick={() => setShowMatchModal(false)}
+                className="bg-gray-100 text-gray-700 px-6 py-2.5 rounded-xl font-semibold hover:bg-gray-200 transition-all"
               >
                 Close
               </button>

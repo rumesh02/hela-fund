@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
 // Strip the /api path from VITE_API_URL to get the base server URL for socket.io
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const SOCKET_URL = API_URL.replace(/\/api\/?$/, '');
 
 let socket = null;

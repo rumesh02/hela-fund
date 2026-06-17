@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Upload, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 const CreateRequest = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -59,7 +61,7 @@ const CreateRequest = () => {
         body.append('proof', formData.proof);
       }
 
-      const response = await fetch('http://localhost:5000/api/requests', {
+      const response = await fetch(`${API_URL}/requests`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -59,6 +59,15 @@ const foundSchema = new mongoose.Schema({
     type: String,
     enum: ['active', 'claimed', 'returned', 'closed'],
     default: 'active'
+  },
+  // Semantic embedding of the item (title + description + category + location),
+  // computed locally with a sentence-transformer model. Used to match against
+  // requesters' lost-item descriptions. Excluded from query results by default
+  // since it's large and only needed server-side for similarity scoring.
+  embedding: {
+    type: [Number],
+    default: undefined,
+    select: false
   }
 }, {
   timestamps: true
