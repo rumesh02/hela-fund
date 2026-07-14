@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 import {
   HeartHandshake,
   Shield,
@@ -109,6 +110,7 @@ const Landing = () => {
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const contactFormRef = useRef(null);
 
   const rotatingWords = ['Find Lost Items', 'Fund Small Needs', 'Help Each Other'];
 
@@ -772,15 +774,28 @@ const Landing = () => {
             )}
 
             <form
+              ref={contactFormRef}
               onSubmit={(e) => {
                 e.preventDefault();
                 setIsSubmitting(true);
-                setTimeout(() => {
-                  setSubmitStatus('success');
-                  setIsSubmitting(false);
-                  setContactForm({ name: '', email: '', message: '' });
-                  setTimeout(() => setSubmitStatus(null), 5000);
-                }, 1000);
+                emailjs
+                  .sendForm(
+                    import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                    import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                    contactFormRef.current,
+                    import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+                  )
+                  .then(() => {
+                    setSubmitStatus('success');
+                    setContactForm({ name: '', email: '', message: '' });
+                  })
+                  .catch(() => {
+                    setSubmitStatus('error');
+                  })
+                  .finally(() => {
+                    setIsSubmitting(false);
+                    setTimeout(() => setSubmitStatus(null), 5000);
+                  });
               }}
               className="space-y-6"
             >
@@ -790,6 +805,7 @@ const Landing = () => {
                   <input
                     type="text"
                     id="name"
+                    name="user_name"
                     value={contactForm.name}
                     onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
                     required
@@ -802,6 +818,7 @@ const Landing = () => {
                   <input
                     type="email"
                     id="email"
+                    name="user_email"
                     value={contactForm.email}
                     onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
                     required
@@ -814,6 +831,7 @@ const Landing = () => {
                 <label htmlFor="message" className="mb-2 block text-sm font-medium text-gray-300">Your Message</label>
                 <textarea
                   id="message"
+                  name="message"
                   value={contactForm.message}
                   onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
                   required
